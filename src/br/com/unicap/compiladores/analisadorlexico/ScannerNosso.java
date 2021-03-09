@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Stack;
 
 public class ScannerNosso {
     private char[] conteudo;
+    private int posição;
 
     public ScannerNosso(String file){
         try {
@@ -15,6 +17,132 @@ public class ScannerNosso {
             conteudo = s.toCharArray();
         } catch (IOException e) {
             e.getStackTrace();
+        }
+    }
+
+    public Token getNextToken() {
+        if(isEndoOfFile()) {
+            return null;
+        }
+        int estado = 0;
+        char charAtual = getNextChar();
+        Stack<Character> pilha = new Stack<Character>();
+        char[] texto;
+        while (true) {
+            switch(estado) {
+                case 0:
+                    if(isIgnorable(charAtual)) {
+                        estado = 0;
+                        charAtual = getNextChar();
+                    } else if (isLetter(charAtual) || isUnderscore(charAtual)) {
+                        estado = 1;
+                        pilha.push(charAtual);
+                        charAtual = getNextChar();
+                    } else if(isDigit(charAtual)) {
+                        estado = 2;
+                        pilha.push(charAtual);
+                        charAtual = getNextChar();
+                    } else if(isSimpleQuotes(charAtual)) {
+                        estado = 4;
+                        pilha.push(charAtual);
+                        charAtual = getNextChar();
+                    } else if(isQuotes(charAtual)) {
+                        estado = 5;
+                        pilha.push(charAtual);
+                        charAtual = getNextChar();
+                    }
+                    break;
+                case 1:
+                    if(isLetter(charAtual) || isDigit(charAtual) || isUnderscore(charAtual)) {
+                        estado = 1;
+                        pilha.push(charAtual);
+                        charAtual = getNextChar();
+                    } else if (!isIgnorable(charAtual) && !isOperator(charAtual) && !isPointComa(charAtual)) {
+                        //erro
+                    } else {
+                        texto = new char[pilha.size()];
+                        int i = 0;
+                        while(!pilha.isEmpty()) {
+                            texto[i] = pilha.pop();
+                            i++;
+                        }
+                        goBack();
+                        return new Token(Token.TK_IDENTIFICADOR, texto.toString());
+                    }
+                    break;
+                case 2:
+                    if(isDigit(charAtual)) {
+                        estado = 2;
+                        pilha.push(charAtual);
+                        charAtual = getNextChar();
+                    } else if (isPoint(charAtual)) {
+                        estado = 3;
+                        pilha.push(charAtual);
+                        charAtual = getNextChar();
+                    } else {
+                        texto = new char[pilha.size()];
+                        int i = 0;
+                        while(!pilha.isEmpty()) {
+                            texto[i] = pilha.pop();
+                            i++;
+                        }
+                        goBack();
+                        return new Token(Token.TK_NUMERO_INT, texto.toString());
+                    }
+                    break;
+                case 3:
+                    if(isDigit(charAtual)) {
+                        estado = 3;
+                        pilha.push(charAtual);
+                        charAtual = getNextChar();
+                    } else {
+                        texto = new char[pilha.size()];
+                        int i = 0;
+                        while(!pilha.isEmpty()) {
+                            texto[i] = pilha.pop();
+                            i++;
+                        }
+                        goBack();
+                        return new Token(Token.TK_NUMERO_FLT, texto.toString());
+                    }
+                    break;
+                case 4:
+                    if(isLetter(charAtual)) {
+                        pilha.push(charAtual);
+                        charAtual = getNextChar();
+                        if(isSimpleQuotes(charAtual)) {
+                            texto = new char[pilha.size()];
+                            int i = 0;
+                            while(!pilha.isEmpty()) {
+                                texto[i] = pilha.pop();
+                                i++;
+                            }
+                            goBack();
+                            return new Token(Token.TK_CHAR, texto.toString());
+                        } else {
+                            //erro
+                        }
+                    }
+                    break;
+                case 5:
+                    if(!isQuotes(charAtual) && charAtual != '\n') {
+                        estado = 5;
+                        pilha.push(charAtual);
+                        charAtual = getNextChar();
+                    } else if(charAtual == '\n') {
+                        //erro
+                    } else {
+                        texto = new char[pilha.size()];
+                        int i = 0;
+                        while(!pilha.isEmpty()) {
+                            texto[i] = pilha.pop();
+                            i++;
+                        }
+                        goBack();
+                        return new Token(Token.TK_STRING, texto.toString());
+                    }
+                    break;
+            }
         }
     }
 
@@ -40,5 +168,39 @@ public class ScannerNosso {
 
     private boolean isOperator(char c) {
         return (c == '>' || c == '<' || c == '=' || c == '!');
+    }
+
+    private char getNextChar() {
+        char c = conteudo[posição];
+        posição++;
+        return c;
+    }
+
+    private boolean isEndoOfFile() {
+        return posição == conteudo.length;
+    }
+
+    private void goBack() {
+        posição--;
+    }
+
+    private boolean isPoint(char c) {
+        return c == '.';
+    }
+
+    private boolean isSimpleQuotes(char c) {
+        return c == '\'';
+    }
+
+    private boolean isQuotes(char c) {
+        return c == '\"';
+    }
+
+    private boolean isUnderscore(char c) {
+        return c == '_';
+    }
+
+    private boolean isPointComa(char c) {
+        return c == ';';
     }
 }
