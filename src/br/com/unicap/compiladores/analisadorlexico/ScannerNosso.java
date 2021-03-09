@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Stack;
 
 public class ScannerNosso {
     private char[] conteudo;
@@ -26,8 +25,8 @@ public class ScannerNosso {
         }
         int estado = 0;
         char charAtual = getNextChar();
-        Stack<Character> pilha = new Stack<Character>();
-        char[] texto;
+        String aux = "";
+        String texto;
         int linha = 1;
         int coluna = 1;
         while (true) {
@@ -38,27 +37,27 @@ public class ScannerNosso {
                         charAtual = getNextChar();
                     } else if (isLetter(charAtual) || isUnderscore(charAtual)) {
                         estado = 1;
-                        pilha.push(charAtual);
+                        aux += charAtual;
                         charAtual = getNextChar();
                     } else if(isDigit(charAtual)) {
                         estado = 2;
-                        pilha.push(charAtual);
+                        aux += charAtual;
                         charAtual = getNextChar();
                     } else if(isSimpleQuotes(charAtual)) {
                         estado = 4;
-                        pilha.push(charAtual);
+                        aux += charAtual;
                         charAtual = getNextChar();
                     } else if(isQuotes(charAtual)) {
                         estado = 5;
-                        pilha.push(charAtual);
+                        aux += charAtual;
                         charAtual = getNextChar();
                     } else if(isOperatorRel(charAtual)) {
                         estado = 6;
-                        pilha.push(charAtual);
+                        aux += charAtual;
                         charAtual = getNextChar();
                     } else if(isMathOperator(charAtual)) {
                         estado = 7;
-                        pilha.push(charAtual);
+                        aux += charAtual;
 
                     }
                     coluna++;
@@ -70,19 +69,15 @@ public class ScannerNosso {
                 case 1:
                     if(isLetter(charAtual) || isDigit(charAtual) || isUnderscore(charAtual)) {
                         estado = 1;
-                        pilha.push(charAtual);
+                        aux += charAtual;
                         charAtual = getNextChar();
                     } else if (!isIgnorable(charAtual) && !isOperatorRel(charAtual) && !isPointComa(charAtual)) {
                         //erro
                     } else {
-                        texto = new char[pilha.size()];
-                        int i = 0;
-                        while(!pilha.isEmpty()) {
-                            texto[i] = pilha.pop();
-                            i++;
-                        }
+                        texto = aux;
+                        aux = "";
                         goBack();
-                        return new Token(Token.TK_IDENTIFICADOR, texto.toString());
+                        return new Token(Token.TK_IDENTIFICADOR, texto);
                     }
                     coluna++;
                     if(charAtual == '\n') {
@@ -93,21 +88,17 @@ public class ScannerNosso {
                 case 2:
                     if(isDigit(charAtual)) {
                         estado = 2;
-                        pilha.push(charAtual);
+                        aux += charAtual;
                         charAtual = getNextChar();
                     } else if (isPoint(charAtual)) {
                         estado = 3;
-                        pilha.push(charAtual);
+                        aux += charAtual;
                         charAtual = getNextChar();
                     } else {
-                        texto = new char[pilha.size()];
-                        int i = 0;
-                        while(!pilha.isEmpty()) {
-                            texto[i] = pilha.pop();
-                            i++;
-                        }
+                        texto = aux;
+                        aux = "";
                         goBack();
-                        return new Token(Token.TK_NUMERO_INT, texto.toString());
+                        return new Token(Token.TK_NUMERO_INT, texto);
                     }
                     coluna++;
                     if(charAtual == '\n') {
@@ -118,17 +109,13 @@ public class ScannerNosso {
                 case 3:
                     if(isDigit(charAtual)) {
                         estado = 3;
-                        pilha.push(charAtual);
+                        aux += charAtual;
                         charAtual = getNextChar();
                     } else {
-                        texto = new char[pilha.size()];
-                        int i = 0;
-                        while(!pilha.isEmpty()) {
-                            texto[i] = pilha.pop();
-                            i++;
-                        }
+                        texto = aux;
+                        aux = "";
                         goBack();
-                        return new Token(Token.TK_NUMERO_FLT, texto.toString());
+                        return new Token(Token.TK_NUMERO_FLT, texto);
                     }
                     coluna++;
                     if(charAtual == '\n') {
@@ -138,17 +125,13 @@ public class ScannerNosso {
                     break;
                 case 4:
                     if(isLetter(charAtual) || isDigit(charAtual)) {
-                        pilha.push(charAtual);
+                        aux += charAtual;
                         charAtual = getNextChar();
                         if(isSimpleQuotes(charAtual)) {
-                            texto = new char[pilha.size()];
-                            int i = 0;
-                            while(!pilha.isEmpty()) {
-                                texto[i] = pilha.pop();
-                                i++;
-                            }
+                            texto = aux;
+                            aux = "";
                             goBack();
-                            return new Token(Token.TK_CHAR, texto.toString());
+                            return new Token(Token.TK_CHAR, texto);
                         } else {
                             //erro
                         }
@@ -162,19 +145,15 @@ public class ScannerNosso {
                 case 5:
                     if(!isQuotes(charAtual) && charAtual != '\n') {
                         estado = 5;
-                        pilha.push(charAtual);
+                        aux += charAtual;
                         charAtual = getNextChar();
                     } else if(charAtual == '\n') {
                         //erro
                     } else {
-                        texto = new char[pilha.size()];
-                        int i = 0;
-                        while(!pilha.isEmpty()) {
-                            texto[i] = pilha.pop();
-                            i++;
-                        }
+                        texto = aux;
+                        aux = "";
                         goBack();
-                        return new Token(Token.TK_STRING, texto.toString());
+                        return new Token(Token.TK_STRING, texto);
                     }
                     coluna++;
                     if(charAtual == '\n') {
@@ -184,17 +163,13 @@ public class ScannerNosso {
                     break;
                 case 6:
                     if(isEqual(charAtual)) {
-                        pilha.push(charAtual);
+                        aux += charAtual;
                         charAtual = getNextChar();
                         if(!isEqual(charAtual)) {
-                            texto = new char[pilha.size()];
-                            int i = 0;
-                            while(!pilha.isEmpty()) {
-                                texto[i] = pilha.pop();
-                                i++;
-                            }
+                            texto  = aux;
+                            aux = "";
                             goBack();
-                            return new Token(Token.TK_OPER_REL, texto.toString());
+                            return new Token(Token.TK_OPER_REL, texto);
                         } else {
                             //erro
                         }
