@@ -28,6 +28,8 @@ public class ScannerNosso {
         char charAtual = getNextChar();
         Stack<Character> pilha = new Stack<Character>();
         char[] texto;
+        int linha = 1;
+        int coluna = 1;
         while (true) {
             switch(estado) {
                 case 0:
@@ -50,6 +52,19 @@ public class ScannerNosso {
                         estado = 5;
                         pilha.push(charAtual);
                         charAtual = getNextChar();
+                    } else if(isOperatorRel(charAtual)) {
+                        estado = 6;
+                        pilha.push(charAtual);
+                        charAtual = getNextChar();
+                    } else if(isMathOperator(charAtual)) {
+                        estado = 7;
+                        pilha.push(charAtual);
+
+                    }
+                    coluna++;
+                    if(charAtual == '\n') {
+                        coluna = 1;
+                        linha++;
                     }
                     break;
                 case 1:
@@ -57,7 +72,7 @@ public class ScannerNosso {
                         estado = 1;
                         pilha.push(charAtual);
                         charAtual = getNextChar();
-                    } else if (!isIgnorable(charAtual) && !isOperator(charAtual) && !isPointComa(charAtual)) {
+                    } else if (!isIgnorable(charAtual) && !isOperatorRel(charAtual) && !isPointComa(charAtual)) {
                         //erro
                     } else {
                         texto = new char[pilha.size()];
@@ -68,6 +83,11 @@ public class ScannerNosso {
                         }
                         goBack();
                         return new Token(Token.TK_IDENTIFICADOR, texto.toString());
+                    }
+                    coluna++;
+                    if(charAtual == '\n') {
+                        coluna = 1;
+                        linha++;
                     }
                     break;
                 case 2:
@@ -89,6 +109,11 @@ public class ScannerNosso {
                         goBack();
                         return new Token(Token.TK_NUMERO_INT, texto.toString());
                     }
+                    coluna++;
+                    if(charAtual == '\n') {
+                        coluna = 1;
+                        linha++;
+                    }
                     break;
                 case 3:
                     if(isDigit(charAtual)) {
@@ -105,9 +130,14 @@ public class ScannerNosso {
                         goBack();
                         return new Token(Token.TK_NUMERO_FLT, texto.toString());
                     }
+                    coluna++;
+                    if(charAtual == '\n') {
+                        coluna = 1;
+                        linha++;
+                    }
                     break;
                 case 4:
-                    if(isLetter(charAtual)) {
+                    if(isLetter(charAtual) || isDigit(charAtual)) {
                         pilha.push(charAtual);
                         charAtual = getNextChar();
                         if(isSimpleQuotes(charAtual)) {
@@ -122,6 +152,11 @@ public class ScannerNosso {
                         } else {
                             //erro
                         }
+                    }
+                    coluna++;
+                    if(charAtual == '\n') {
+                        coluna = 1;
+                        linha++;
                     }
                     break;
                 case 5:
@@ -140,6 +175,29 @@ public class ScannerNosso {
                         }
                         goBack();
                         return new Token(Token.TK_STRING, texto.toString());
+                    }
+                    coluna++;
+                    if(charAtual == '\n') {
+                        coluna = 1;
+                        linha++;
+                    }
+                    break;
+                case 6:
+                    if(isEqual(charAtual)) {
+                        pilha.push(charAtual);
+                        charAtual = getNextChar();
+                        if(!isEqual(charAtual)) {
+                            texto = new char[pilha.size()];
+                            int i = 0;
+                            while(!pilha.isEmpty()) {
+                                texto[i] = pilha.pop();
+                                i++;
+                            }
+                            goBack();
+                            return new Token(Token.TK_OPER_REL, texto.toString());
+                        } else {
+                            //erro
+                        }
                     }
                     break;
             }
@@ -166,8 +224,12 @@ public class ScannerNosso {
         return (c == ' ' || c =='\n' || c == '\t' || c == '\r');
     }
 
-    private boolean isOperator(char c) {
+    private boolean isOperatorRel(char c) {
         return (c == '>' || c == '<' || c == '=' || c == '!');
+    }
+
+    private boolean isMathOperator(char c) {
+        return (c == '+' || c == '-' || c == '*' || c == '/');
     }
 
     private char getNextChar() {
@@ -202,5 +264,9 @@ public class ScannerNosso {
 
     private boolean isPointComa(char c) {
         return c == ';';
+    }
+
+    private boolean isEqual(char c) {
+        return c == '=';
     }
 }
