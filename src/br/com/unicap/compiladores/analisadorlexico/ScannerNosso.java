@@ -88,8 +88,9 @@ public class ScannerNosso extends Scan{
             }
             retrocede();
         }
-        System.out.println("Termo encontrado: " + termo);
-        Integer tk = Token.pRHashtable.get(termo);
+        Token t = new Token();
+        t.run();
+        Integer tk = t.pRHashtable.get(termo);
         System.out.println("Valor vindo do hashtable: " + tk);
         if(tk != null) {
             return new Token(tk.intValue(), termo);

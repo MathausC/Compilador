@@ -37,7 +37,7 @@ public class Token{
     private int tipo;
     private String texto;
 
-    protected static Hashtable<String, Integer> pRHashtable = new Hashtable<String, Integer>();
+    protected Hashtable<String, Integer> pRHashtable = new Hashtable<String, Integer>();
 
     protected void run() {
         pRHashtable.put("main", 1);
