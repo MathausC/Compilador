@@ -63,6 +63,9 @@ public class ScannerNosso extends Scan{
                         retrocede();
                         estado = -1;
                     }
+                    if(estado != 0) {
+                        System.out.println("estado: " + estado);
+                    }
                     break;
                 case 1: return getTokenID();
                 case 2: return getTokenDig();
@@ -94,7 +97,7 @@ public class ScannerNosso extends Scan{
         Integer tk = t.pRHashtable.get(termo);
         System.out.println("Valor vindo do hashtable: " + tk);
         if(tk != null) {
-            return new Token(tk.intValue(), termo);
+            return new Token(tk, termo);
         }
         return new Token(Token.TK_IDENTIFICADOR, termo);
     }
@@ -116,15 +119,23 @@ public class ScannerNosso extends Scan{
                     termo += aux;
                     aux = getCharAtual();
                 }
-                retrocede();
-                return new Token(Token.TK_NUMERO_FLT, termo);
+                if(isIgnorable(aux)){
+                    retrocede();
+                    return new Token(Token.TK_NUMERO_FLT, termo);
+                }else{
+                    throw new LexicalException("Digito invalido!");
+                }
             } else {
                 retrocede();
                 retrocede();
                 throw new LexicalException("Digito invalido!");
             }
-        } else retrocede();
-        return new Token(Token.TK_NUMERO_INT, termo);
+        } else if(isIgnorable(aux)){
+            retrocede();
+            return new Token(Token.TK_NUMERO_INT, termo);
+        }else{
+            throw new LexicalException("Digito invalido!");
+        }
     }
     //'(letra|digito)'
     private Token getTokenChar() {
