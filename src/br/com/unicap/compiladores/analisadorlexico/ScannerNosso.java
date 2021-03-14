@@ -63,9 +63,6 @@ public class ScannerNosso extends Scan{
                         retrocede();
                         estado = -1;
                     }
-                    if(estado != 0) {
-                        System.out.println("estado: " + estado);
-                    }
                     break;
                 case 1: return getTokenID();
                 case 2: return getTokenDig();
