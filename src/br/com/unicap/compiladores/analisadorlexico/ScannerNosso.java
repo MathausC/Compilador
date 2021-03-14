@@ -1,4 +1,5 @@
 package br.com.unicap.compiladores.analisadorlexico;
+import br.com.unicap.compiladores.excecoes.LexicalException;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -30,7 +31,7 @@ public class ScannerNosso extends Scan{
         return tokens;
     }
 
-    private Token getToken() {
+    private Token getToken(){
         int estado = 0;
         char atual = getCharAtual();
         while(true) {
@@ -59,8 +60,8 @@ public class ScannerNosso extends Scan{
                         retrocede();
                         estado = 6;
                     } else {
-                        //ERRO
-                        return null;
+                        retrocede();
+                        estado = -1;
                     }
                     break;
                 case 1: return getTokenID();
@@ -69,7 +70,7 @@ public class ScannerNosso extends Scan{
                 case 4: return getTokenOpRel();
                 case 5: return getTokenOpMat();
                 case 6: return getTokenSep();
-                default: //erro;                
+                default: throw new LexicalException("Caractere não reconhecido!");
             }
         }
     }
@@ -120,7 +121,7 @@ public class ScannerNosso extends Scan{
             } else {
                 retrocede();
                 retrocede();
-                //ERRO, FLOTA MAL FORMADO;
+                throw new LexicalException("Digito invalido!");
             }
         } else retrocede();
         return new Token(Token.TK_NUMERO_INT, termo);
@@ -136,7 +137,7 @@ public class ScannerNosso extends Scan{
                 termo += aux;
                 aux = getCharAtual();
                 if(!isSimpleQuotes(aux)){
-                    //ERRO, CHAR MAL FORMADO;
+                    throw new LexicalException("Caractere invalido!");
                 }
                 else {
                     termo += aux;
@@ -175,7 +176,7 @@ public class ScannerNosso extends Scan{
                 retrocede();
                 if(isMoreThan(temp)) return new Token(Token.TK_OPER_REL_MAIOR, termo);
                 else if(isLessThan(temp)) return new Token(Token.TK_OPER_REL_MENOR, termo);
-                else /*erro*/ return null;
+                else throw new LexicalException("Operador invalido!");
             }
         }
     }
