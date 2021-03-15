@@ -72,7 +72,7 @@ public class ScannerNosso extends Scan{
                 case 4: return getTokenOpRel();
                 case 5: return getTokenOpMat();
                 case 6: return getTokenSep();
-                default: throw new LexicalException("Caractere não reconhecido!");
+                default: throw new LexicalException("CARACTERE NÃO RECONECIDO!", linha, coluna);
             }
         }
     }
@@ -121,18 +121,18 @@ public class ScannerNosso extends Scan{
                     retrocede();
                     return new Token(Token.TK_NUMERO_FLT, termo);
                 }else{
-                    throw new LexicalException("Digito invalido!");
+                    throw new LexicalException("DIGITO INVALIDO!", linha, coluna);
                 }
             } else {
                 retrocede();
                 retrocede();
-                throw new LexicalException("Digito invalido!");
+                throw new LexicalException("DIGITO INVALIDO!", linha, coluna);
             }
         } else if(!(isLetter(aux) || isUnderscore(aux))){
             retrocede();
             return new Token(Token.TK_NUMERO_INT, termo);
         }else{
-            throw new LexicalException("Digito invalido!");
+            throw new LexicalException("DIGITO INVALIDO!", linha, coluna);
         }
     }
     //'(letra|digito)'
@@ -146,7 +146,7 @@ public class ScannerNosso extends Scan{
                 termo += aux;
                 aux = getCharAtual();
                 if(!isSimpleQuotes(aux)){
-                    throw new LexicalException("Caractere invalido!");
+                    throw new LexicalException("CARACTERE INVALIDO!", linha, coluna);
                 }
                 else {
                     termo += aux;
@@ -185,7 +185,7 @@ public class ScannerNosso extends Scan{
                 retrocede();
                 if(isMoreThan(temp)) return new Token(Token.TK_OPER_REL_MAIOR, termo);
                 else if(isLessThan(temp)) return new Token(Token.TK_OPER_REL_MENOR, termo);
-                else throw new LexicalException("Operador invalido!");
+                else throw new LexicalException("OPERADOR INVALIDO!", linha, coluna);
             }
         }
     }
