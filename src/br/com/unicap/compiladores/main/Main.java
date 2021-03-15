@@ -13,8 +13,6 @@ public class Main {
             System.out.println(tokens);
         }catch (LexicalException a){
             System.out.println("ERRO: " + a.getMessage());
-        }catch (Exception b){
-            System.out.println("ERRO GENERICO");
         }
     }
 }

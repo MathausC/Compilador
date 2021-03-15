@@ -10,6 +10,8 @@ import java.util.ArrayList;
 public class ScannerNosso extends Scan{
     private char[] c;
     private int pos;
+    private int linha;
+    private int coluna;
     private ArrayList<Token> tokens = new ArrayList<Token>();
 
     public ScannerNosso(String file){
@@ -89,12 +91,12 @@ public class ScannerNosso extends Scan{
             }
             retrocede();
         }
-        Integer tk = Token.pRHashtable.get(termo);
-        System.out.println("Valor vindo do hashtable: " + tk);
+        Token t = new Token(Token.TK_IDENTIFICADOR, termo);
+        Integer tk = t.pRHashtable.get(termo);
         if(tk != null) {
             return new Token(tk, termo);
         }
-        return new Token(Token.TK_IDENTIFICADOR, termo);
+        return t;
     }
     //(digito)+ || (digito).(digito)+
     private Token getTokenDig() {
@@ -199,7 +201,7 @@ public class ScannerNosso extends Scan{
             aux = getCharAtual();
             if(isDivisor(aux)){
                 ignoreLine();
-                return null;                
+                return getToken();                
             } else {
                 retrocede();
                 return new Token(Token.TK_OPER_MAT_DIV, termo);
@@ -222,6 +224,7 @@ public class ScannerNosso extends Scan{
     private void ignoreLine() {
         char aux = getCharAtual();
         while(aux != '\n') {
+            System.out.print(aux);
             aux = getCharAtual();
         }
     }
@@ -232,10 +235,26 @@ public class ScannerNosso extends Scan{
 
     private void retrocede() {
         pos--;
+        if(c[pos] != '\n') {
+            coluna--;
+        } else {
+            linha --;
+            int cont = pos;
+            while(c[cont] != '\n'){
+                cont--;
+                coluna++;
+            }
+        }
     }
 
     private char getCharAtual() {
         char ret = c[pos];
+        if(ret != '\n'){
+            coluna++;
+        } else {
+            coluna = 0;
+            linha++;
+        }
         pos++;
         return ret;
     }

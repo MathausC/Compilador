@@ -37,7 +37,7 @@ public class Token{
     private int tipo;
     private String texto;
 
-    protected static Hashtable<String, Integer> pRHashtable;
+    protected Hashtable<String, Integer> pRHashtable;
 
     protected void run() {
         pRHashtable.put("main", 1);
@@ -50,16 +50,12 @@ public class Token{
         pRHashtable.put("float", 8);
         pRHashtable.put("char", 9);
     }
-    
+        
     Token(int tipo, String texto) {
-        super();
-        setTipo(tipo);
-        setTexto(texto);
-    }
-
-    Token(){
         pRHashtable = new Hashtable<String, Integer>();
         run();
+        setTipo(tipo);
+        setTexto(texto);
     }
 
     int getTipo() {
