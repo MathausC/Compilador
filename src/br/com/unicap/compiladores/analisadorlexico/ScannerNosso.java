@@ -110,11 +110,12 @@ public class ScannerNosso extends Scan{
             if(isDigit(aux)) {
                 termo += temp;
                 termo += aux;
+                aux = getCharAtual();
                 while(isDigit(aux)) {
                     termo += aux;
                     aux = getCharAtual();
                 }
-                if(isIgnorable(aux)){
+                if(!(isLetter(aux) || isUnderscore(aux))){
                     retrocede();
                     return new Token(Token.TK_NUMERO_FLT, termo);
                 }else{
@@ -125,7 +126,7 @@ public class ScannerNosso extends Scan{
                 retrocede();
                 throw new LexicalException("Digito invalido!");
             }
-        } else if(isIgnorable(aux)){
+        } else if(!(isLetter(aux) || isUnderscore(aux))){
             retrocede();
             return new Token(Token.TK_NUMERO_INT, termo);
         }else{
