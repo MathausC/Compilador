@@ -12,7 +12,7 @@ public class Main {
             ArrayList<Token> tokens = s.getTokens();
             System.out.println(tokens);
         }catch (LexicalException a){
-            System.out.println("ERRO: " + a.getMessage());
+            System.out.println(a.getMessage());
         }
     }
 }

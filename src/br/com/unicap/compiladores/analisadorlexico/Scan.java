@@ -29,20 +29,12 @@ public abstract class Scan {
         return c == '\'';
     }
 
-    protected boolean isQuotes(char c) {
-        return c == '\"';
-    }
-
     protected boolean isUnderscore(char c) {
         return c == '_';
     }
 
     protected boolean isSeparator(char c) {
         return (c == '(' || c == ')' || c == '{' || c == '}' || c == ',' || c == ';');
-    }
-
-    protected boolean isPointComa(char c) {
-        return c == ';';
     }
 
     protected boolean isComa(char c) {
@@ -75,10 +67,6 @@ public abstract class Scan {
 
     protected boolean isLessThan(char c) {
         return c == '<';
-    }
-
-    protected boolean isDiferent(char c) {
-        return c == '!';
     }
 
     protected boolean isPlus(char c) {

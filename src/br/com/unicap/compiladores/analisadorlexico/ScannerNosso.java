@@ -72,11 +72,11 @@ public class ScannerNosso extends Scan{
                 case 4: return getTokenOpRel();
                 case 5: return getTokenOpMat();
                 case 6: return getTokenSep();
-                default: throw new LexicalException("CARACTERE NÃO RECONECIDO!", linha, coluna);
+                default: throw new LexicalException(LexicalException.ERRO_ESTADO, linha, coluna);
             }
         }
     }
-
+    // ;
     //(letra|_)(letra|_|digito)*
     private Token getTokenID() {
         String termo = "";
@@ -88,6 +88,9 @@ public class ScannerNosso extends Scan{
             while(isLetter(aux) || isUnderscore(aux) || isDigit(aux)){
                 termo += aux;
                 aux = getCharAtual();
+            }
+            if(isPoint(aux)) {
+                throw new LexicalException(LexicalException.ERRO_ID, linha, coluna);
             }
             retrocede();
         }
@@ -121,18 +124,16 @@ public class ScannerNosso extends Scan{
                     retrocede();
                     return new Token(Token.TK_NUMERO_FLT, termo);
                 }else{
-                    throw new LexicalException("DIGITO INVALIDO!", linha, coluna);
+                    throw new LexicalException(LexicalException.ERRO_FLOAT, linha, coluna);
                 }
             } else {
-                retrocede();
-                retrocede();
-                throw new LexicalException("DIGITO INVALIDO!", linha, coluna);
+                throw new LexicalException(LexicalException.ERRO_INT, linha, coluna);
             }
         } else if(!(isLetter(aux) || isUnderscore(aux))){
             retrocede();
             return new Token(Token.TK_NUMERO_INT, termo);
         }else{
-            throw new LexicalException("DIGITO INVALIDO!", linha, coluna);
+            throw new LexicalException(LexicalException.ERRO_INT, linha, coluna);
         }
     }
     //'(letra|digito)'
@@ -146,12 +147,14 @@ public class ScannerNosso extends Scan{
                 termo += aux;
                 aux = getCharAtual();
                 if(!isSimpleQuotes(aux)){
-                    throw new LexicalException("CARACTERE INVALIDO!", linha, coluna);
+                    throw new LexicalException(LexicalException.ERRO_CHAR, linha, coluna);
                 }
                 else {
                     termo += aux;
                 }
                 retrocede();
+            } else {
+                throw new LexicalException(LexicalException.ERRO_CHAR, linha, coluna);
             }
         }
         return new Token(Token.TK_CHAR, termo);
@@ -185,7 +188,9 @@ public class ScannerNosso extends Scan{
                 retrocede();
                 if(isMoreThan(temp)) return new Token(Token.TK_OPER_REL_MAIOR, termo);
                 else if(isLessThan(temp)) return new Token(Token.TK_OPER_REL_MENOR, termo);
-                else throw new LexicalException("OPERADOR INVALIDO!", linha, coluna);
+                else  {
+                    throw new LexicalException(LexicalException.ERRO_ID, linha, coluna);
+                }    
             }
         }
     }
