@@ -1,7 +1,5 @@
 package br.com.unicap.compiladores.analisadorlexico;
 
-import java.util.Hashtable;
-
 public class Token{
     static final int TK_IDENTIFICADOR = 0;
     static final int TK_PR_MAIN = 1;
@@ -36,24 +34,8 @@ public class Token{
 
     private int tipo;
     private String texto;
-
-    protected Hashtable<String, Integer> pRHashtable;
-
-    protected void run() {
-        pRHashtable.put("main", 1);
-        pRHashtable.put("if", 2);
-        pRHashtable.put("else", 3);
-        pRHashtable.put("while", 4);
-        pRHashtable.put("do", 5);
-        pRHashtable.put("for", 6);
-        pRHashtable.put("int", 7);
-        pRHashtable.put("float", 8);
-        pRHashtable.put("char", 9);
-    }
         
     Token(int tipo, String texto) {
-        pRHashtable = new Hashtable<String, Integer>();
-        run();
         setTipo(tipo);
         setTexto(texto);
     }

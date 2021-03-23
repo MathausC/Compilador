@@ -84,4 +84,8 @@ public abstract class Scan {
     protected boolean isMultiplier(char c) {
         return c == '*';
     }
+
+    protected boolean isFimDePilha(char c) {
+        return c == '$';
+    }
 }

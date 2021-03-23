@@ -13,6 +13,7 @@ public class ScannerNosso extends Scan{
     private int linha;
     private int coluna;
     private ArrayList<Token> tokens;
+    private Hash hash;
 
     public ScannerNosso(String file){
         try {
@@ -20,6 +21,7 @@ public class ScannerNosso extends Scan{
             s = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
             c = s.toCharArray();
             tokens = new ArrayList<Token>();
+            hash = Hash.getCOntrutor();
         } catch (IOException e) {
             e.getStackTrace();
         }
@@ -38,9 +40,9 @@ public class ScannerNosso extends Scan{
         int estado = 0;
         char atual = getCharAtual();
         while(true) {
-            if(isEndOfFile()) return null;
             switch (estado) {
                 case 0:
+                    System.out.println("Estado 0");
                     if(isIgnorable(atual)) {
                         estado = 0;
                         atual = getCharAtual();
@@ -62,6 +64,8 @@ public class ScannerNosso extends Scan{
                     } else if(isSeparator(atual)){
                         retrocede();
                         estado = 6;
+                    } else if(isFimDePilha(atual)) {
+                        estado = 7;
                     } else {
                         retrocede();
                         estado = -1;
@@ -73,6 +77,7 @@ public class ScannerNosso extends Scan{
                 case 4: return getTokenOpRel();
                 case 5: return getTokenOpMat();
                 case 6: return getTokenSep();
+                case 7: return null;
                 default: throw new LexicalException(LexicalException.ERRO_ESTADO, linha, coluna);
             }
         }
@@ -96,7 +101,7 @@ public class ScannerNosso extends Scan{
             retrocede();
         }
         Token t = new Token(Token.TK_IDENTIFICADOR, termo);
-        Integer tk = t.pRHashtable.get(termo);
+        Integer tk = hash.get(termo);
         if(tk != null) {
             return new Token(tk, termo);
         }
@@ -121,8 +126,8 @@ public class ScannerNosso extends Scan{
                     termo += aux;
                     aux = getCharAtual();
                 }
+                
                 if(!(isLetter(aux) || isUnderscore(aux))){
-                    retrocede();
                     return new Token(Token.TK_NUMERO_FLT, termo);
                 }else{
                     throw new LexicalException(LexicalException.ERRO_FLOAT, linha, coluna);
@@ -155,7 +160,6 @@ public class ScannerNosso extends Scan{
                 else {
                     termo += aux;
                 }
-                retrocede();
             } else {
                 throw new LexicalException(LexicalException.ERRO_CHAR, linha, coluna);
             }
@@ -218,6 +222,7 @@ public class ScannerNosso extends Scan{
     }
 
     private Token getTokenSep() {
+        System.out.println("Chamou o separador.");
         String termo = "";
         char aux = getCharAtual();
         termo += aux;
@@ -244,8 +249,7 @@ public class ScannerNosso extends Scan{
     private void retrocede() {
         if(pos >= c.length) {
             pos--;
-        }
-        else {
+        } else {
             pos--;
             if(c[pos] != '\n') {
                 coluna--;
@@ -261,7 +265,6 @@ public class ScannerNosso extends Scan{
     }
 
     private char getCharAtual() {
-
         char ret;
         if(!isEndOfFile()){
             ret = c[pos];
@@ -273,9 +276,8 @@ public class ScannerNosso extends Scan{
             }
             pos++;
         }else{
-            ret = ' ';
+            ret = '$';
         }
-
         return ret;
     }
 }    
