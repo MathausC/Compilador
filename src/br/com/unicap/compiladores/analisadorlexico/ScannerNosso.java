@@ -12,13 +12,14 @@ public class ScannerNosso extends Scan{
     private int pos;
     private int linha;
     private int coluna;
-    private ArrayList<Token> tokens = new ArrayList<Token>();
+    private ArrayList<Token> tokens;
 
     public ScannerNosso(String file){
         try {
             String s;
             s = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
             c = s.toCharArray();
+            tokens = new ArrayList<Token>();
         } catch (IOException e) {
             e.getStackTrace();
         }
