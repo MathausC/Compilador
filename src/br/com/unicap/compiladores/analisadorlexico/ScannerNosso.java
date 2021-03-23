@@ -240,21 +240,29 @@ public class ScannerNosso extends Scan{
     }
 
     private void retrocede() {
-        pos--;
-        if(c[pos] != '\n') {
-            coluna--;
-        } else {
-            linha --;
-            int cont = pos;
-            while(c[cont] != '\n'){
-                cont--;
-                coluna++;
+        if(pos >= c.length) {
+            pos--;
+        }
+        else {
+            pos--;
+            if(c[pos] != '\n') {
+                coluna--;
+            } else {
+                linha --;
+                int cont = pos;
+                while(c[cont] != '\n'){
+                    cont--;
+                    coluna++;
+                }
             }
         }
     }
 
     private char getCharAtual() {
-        char ret = c[pos];
+        char ret = ' ';
+        if(pos < c.length) {
+            ret = c[pos];
+        }
         if(ret != '\n'){
             coluna++;
         } else {
