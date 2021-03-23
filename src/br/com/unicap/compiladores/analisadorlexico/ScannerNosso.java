@@ -130,6 +130,8 @@ public class ScannerNosso extends Scan{
             } else {
                 throw new LexicalException(LexicalException.ERRO_INT, linha, coluna);
             }
+        } else if (isEndOfFile()){
+            return new Token(Token.TK_NUMERO_INT, termo);
         } else if(!(isLetter(aux) || isUnderscore(aux))){
             retrocede();
             return new Token(Token.TK_NUMERO_INT, termo);
@@ -236,7 +238,7 @@ public class ScannerNosso extends Scan{
     }
 
     private boolean isEndOfFile() {
-        return pos == c.length;
+        return pos >= c.length;
     }
 
     private void retrocede() {
@@ -259,17 +261,21 @@ public class ScannerNosso extends Scan{
     }
 
     private char getCharAtual() {
-        char ret = ' ';
-        if(pos < c.length) {
+
+        char ret;
+        if(!isEndOfFile()){
             ret = c[pos];
+            if(ret != '\n'){
+                coluna++;
+            } else {
+                coluna = 0;
+                linha++;
+            }
+            pos++;
+        }else{
+            ret = ' ';
         }
-        if(ret != '\n'){
-            coluna++;
-        } else {
-            coluna = 0;
-            linha++;
-        }
-        pos++;
+
         return ret;
     }
 }    
