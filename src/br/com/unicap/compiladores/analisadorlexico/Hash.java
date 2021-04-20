@@ -6,23 +6,23 @@ class Hash {
 
     private static Hash hash;
 
-    private static Hashtable<String, Integer> pRHashtable;
+    private static Hashtable<String, Enum> pRHashtable;
 
     private Hash() {
-        pRHashtable = new Hashtable<String, Integer>();
+        pRHashtable = new Hashtable<String, Enum>();
         run();
     }
 
     void run() {
-        pRHashtable.put("main", 1);
-        pRHashtable.put("if", 2);
-        pRHashtable.put("else", 3);
-        pRHashtable.put("while", 4);
-        pRHashtable.put("do", 5);
-        pRHashtable.put("for", 6);
-        pRHashtable.put("int", 7);
-        pRHashtable.put("float", 8);
-        pRHashtable.put("char", 9);
+        pRHashtable.put("main", TokensID.TK_PR_MAIN);
+        pRHashtable.put("if", TokensID.TK_PR_IF);
+        pRHashtable.put("else", TokensID.TK_PR_ELSE);
+        pRHashtable.put("while", TokensID.TK_PR_WHILE);
+        pRHashtable.put("do", TokensID.TK_PR_DO);
+        pRHashtable.put("for", TokensID.TK_PR_FOR);
+        pRHashtable.put("int", TokensID.TK_PR_INT);
+        pRHashtable.put("float", TokensID.TK_PR_FLOAT);
+        pRHashtable.put("char", TokensID.TK_PR_CHAR);
     }
 
     protected static Hash getCOntrutor() {
@@ -32,7 +32,7 @@ class Hash {
         return hash;
     }
 
-    Integer get(String termo) {
+    Enum get(String termo) {
         return pRHashtable.get(termo);
     }
 }

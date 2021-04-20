@@ -99,8 +99,8 @@ public class ScannerNosso extends Scan{
             }
             retrocede();
         }
-        Token t = new Token(Token.TK_IDENTIFICADOR, termo);
-        Integer tk = hash.get(termo);
+        Token t = new Token(TokensID.TK_IDENTIFICADOR, termo);
+        Enum tk = hash.get(termo);
         if(tk != null) {
             return new Token(tk, termo);
         }
@@ -127,7 +127,7 @@ public class ScannerNosso extends Scan{
                 }
                 
                 if(!(isLetter(aux) || isUnderscore(aux))){
-                    return new Token(Token.TK_NUMERO_FLT, termo);
+                    return new Token(TokensID.TK_NUMERO_FLT, termo);
                 }else{
                     throw new LexicalException(LexicalException.ERRO_FLOAT, linha, coluna);
                 }
@@ -135,10 +135,10 @@ public class ScannerNosso extends Scan{
                 throw new LexicalException(LexicalException.ERRO_INT, linha, coluna);
             }
         } else if (isEndOfFile()){
-            return new Token(Token.TK_NUMERO_INT, termo);
+            return new Token(TokensID.TK_NUMERO_INT, termo);
         } else if(!(isLetter(aux) || isUnderscore(aux))){
             retrocede();
-            return new Token(Token.TK_NUMERO_INT, termo);
+            return new Token(TokensID.TK_NUMERO_INT, termo);
         }else{
             throw new LexicalException(LexicalException.ERRO_INT, linha, coluna);
         }
@@ -163,7 +163,7 @@ public class ScannerNosso extends Scan{
                 throw new LexicalException(LexicalException.ERRO_CHAR, linha, coluna);
             }
         }
-        return new Token(Token.TK_CHAR, termo);
+        return new Token(TokensID.TK_CHAR, termo);
     }
     // < || > || <= || >= || == || !=
     private Token getTokenOpRel() {
@@ -175,25 +175,25 @@ public class ScannerNosso extends Scan{
             if(isEqual(aux)) {
                 termo += temp;
                 termo += aux;
-                return new Token(Token.TK_OPER_REL_IGUAL, termo);
+                return new Token(TokensID.TK_OPER_REL_IGUAL, termo);
             } else {
                 termo += temp;
                 retrocede();
-                return new Token(Token.TK_ATRIBUICAO, termo);
+                return new Token(TokensID.TK_ATRIBUICAO, termo);
             }
         } else {
             aux = getCharAtual();
             if(isEqual(aux)) {
                 termo += temp;
                 termo += aux;
-                if(isMoreThan(temp)) return new Token(Token.TK_OPER_REL_MAIOR_IGUAL, termo);
-                else if(isLessThan(temp)) return new Token(Token.TK_OPER_REL_MENOR_IGUAL, termo);
-                else return new Token(Token.TK_OPER_REL_DIFERENTE, termo);                
+                if(isMoreThan(temp)) return new Token(TokensID.TK_OPER_REL_MAIOR_IGUAL, termo);
+                else if(isLessThan(temp)) return new Token(TokensID.TK_OPER_REL_MENOR_IGUAL, termo);
+                else return new Token(TokensID.TK_OPER_REL_DIFERENTE, termo);                
             } else {
                 termo += temp;
                 retrocede();
-                if(isMoreThan(temp)) return new Token(Token.TK_OPER_REL_MAIOR, termo);
-                else if(isLessThan(temp)) return new Token(Token.TK_OPER_REL_MENOR, termo);
+                if(isMoreThan(temp)) return new Token(TokensID.TK_OPER_REL_MAIOR, termo);
+                else if(isLessThan(temp)) return new Token(TokensID.TK_OPER_REL_MENOR, termo);
                 else  {
                     throw new LexicalException(LexicalException.ERRO_ID, linha, coluna);
                 }    
@@ -205,9 +205,9 @@ public class ScannerNosso extends Scan{
         String termo = "";
         char aux = getCharAtual();
         termo += aux;
-        if (isPlus(aux)) return new Token(Token.TK_OPER_MAT_SOMA, termo);
-        else if(isMinus(aux)) return new Token(Token.TK_OPER_MAT_SUB, termo);
-        else if(isMultiplier(aux)) return new Token(Token.TK_OPER_MAT_MULT, termo);
+        if (isPlus(aux)) return new Token(TokensID.TK_OPER_MAT_SOMA, termo);
+        else if(isMinus(aux)) return new Token(TokensID.TK_OPER_MAT_SUB, termo);
+        else if(isMultiplier(aux)) return new Token(TokensID.TK_OPER_MAT_MULT, termo);
         else {
             aux = getCharAtual();
             if(isDivisor(aux)){
@@ -215,7 +215,7 @@ public class ScannerNosso extends Scan{
                 return getToken();                
             } else {
                 retrocede();
-                return new Token(Token.TK_OPER_MAT_DIV, termo);
+                return new Token(TokensID.TK_OPER_MAT_DIV, termo);
             }
         }
     }
@@ -224,12 +224,12 @@ public class ScannerNosso extends Scan{
         String termo = "";
         char aux = getCharAtual();
         termo += aux;
-        if(isOpenBras(aux)) return new Token(Token.TK_SEPARADOR_ABRE_CHAV, termo);
-        else if(isCloseBras(aux)) return new Token(Token.TK_SEPARADOR_FECHA_CHAV, termo);
-        else if(isOpenBracket(aux)) return new Token(Token.TK_SEPARADOR_ABRE_COLCH, termo);
-        else if(isCloseBracket(aux))return new Token(Token.TK_SEPARADOR_FECHA_COLCH, termo);
-        else if(isComa(aux)) return new Token(Token.TK_SEPARADOR_VIRGULA, termo);
-        else return new Token(Token.TK_SEPARADOR_PONTO, termo);
+        if(isOpenBras(aux)) return new Token(TokensID.TK_SEPARADOR_ABRE_CHAV, termo);
+        else if(isCloseBras(aux)) return new Token(TokensID.TK_SEPARADOR_FECHA_CHAV, termo);
+        else if(isOpenBracket(aux)) return new Token(TokensID.TK_SEPARADOR_ABRE_COLCH, termo);
+        else if(isCloseBracket(aux))return new Token(TokensID.TK_SEPARADOR_FECHA_COLCH, termo);
+        else if(isComa(aux)) return new Token(TokensID.TK_SEPARADOR_VIRGULA, termo);
+        else return new Token(TokensID.TK_SEPARADOR_PONTO, termo);
     }
 
     private void ignoreLine() {

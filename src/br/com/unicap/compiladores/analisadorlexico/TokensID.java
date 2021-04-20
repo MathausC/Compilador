@@ -1,6 +1,6 @@
 package br.com.unicap.compiladores.analisadorlexico;
 
-enum TokensID {
+public enum TokensID {
     TK_IDENTIFICADOR,
     TK_PR_MAIN,
     TK_PR_IF,
