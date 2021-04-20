@@ -42,7 +42,6 @@ public class ScannerNosso extends Scan{
         while(true) {
             switch (estado) {
                 case 0:
-                    System.out.println("Estado 0");
                     if(isIgnorable(atual)) {
                         estado = 0;
                         atual = getCharAtual();
@@ -222,7 +221,6 @@ public class ScannerNosso extends Scan{
     }
 
     private Token getTokenSep() {
-        System.out.println("Chamou o separador.");
         String termo = "";
         char aux = getCharAtual();
         termo += aux;
