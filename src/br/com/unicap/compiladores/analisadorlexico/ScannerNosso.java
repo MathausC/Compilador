@@ -100,7 +100,7 @@ public class ScannerNosso extends Scan{
             retrocede();
         }
         Token t = new Token(TokensID.TK_IDENTIFICADOR, termo);
-        Enum tk = hash.get(termo);
+        Enum<TokensID> tk = hash.get(termo);
         if(tk != null) {
             return new Token(tk, termo);
         }
@@ -224,8 +224,8 @@ public class ScannerNosso extends Scan{
         String termo = "";
         char aux = getCharAtual();
         termo += aux;
-        if(isOpenBras(aux)) return new Token(TokensID.TK_SEPARADOR_ABRE_CHAV, termo);
-        else if(isCloseBras(aux)) return new Token(TokensID.TK_SEPARADOR_FECHA_CHAV, termo);
+        if(isOpenBras(aux)) return new Token(TokensID.TK_SEPARADOR_ABRE_PAR, termo);
+        else if(isCloseBras(aux)) return new Token(TokensID.TK_SEPARADOR_FECHA_PAR, termo);
         else if(isOpenBracket(aux)) return new Token(TokensID.TK_SEPARADOR_ABRE_COLCH, termo);
         else if(isCloseBracket(aux))return new Token(TokensID.TK_SEPARADOR_FECHA_COLCH, termo);
         else if(isComa(aux)) return new Token(TokensID.TK_SEPARADOR_VIRGULA, termo);
