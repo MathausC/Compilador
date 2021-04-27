@@ -2,19 +2,19 @@ package br.com.unicap.compiladores.analisadorlexico;
 
 public class Token{
 
-    private Enum tipo;
+    private Enum<TokensID> tipo;
     private String texto;
         
-    Token(Enum tipo, String texto) {
+    Token(Enum<TokensID> tipo, String texto) {
         setTipo(tipo);
         setTexto(texto);
     }
 
-    Enum getTipo() {
+    Enum<TokensID> getTipo() {
         return tipo;
     }
 
-    private void setTipo(Enum tipo) {
+    private void setTipo(Enum<TokensID> tipo) {
         this.tipo = tipo;
     }
 
@@ -26,7 +26,7 @@ public class Token{
         this.texto = texto;
     }
 
-    private String getTKString(Enum tipo) {
+    private String getTKString(Enum<TokensID> tipo) {
         return tipo.toString();
     }
 
