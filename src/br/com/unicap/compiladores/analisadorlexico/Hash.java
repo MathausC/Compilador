@@ -6,10 +6,10 @@ class Hash {
 
     private static Hash hash;
 
-    private static Hashtable<String, Enum<TokensID>> pRHashtable;
+    private static Hashtable<String, TokensID> pRHashtable;
 
     private Hash() {
-        pRHashtable = new Hashtable<String, Enum<TokensID>>();
+        pRHashtable = new Hashtable<String, TokensID>();
         run();
     }
 
@@ -32,7 +32,7 @@ class Hash {
         return hash;
     }
 
-    Enum<TokensID> get(String termo) {
+    TokensID get(String termo) {
         return pRHashtable.get(termo);
     }
 }
