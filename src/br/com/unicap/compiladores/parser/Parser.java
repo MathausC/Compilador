@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import br.com.unicap.compiladores.analisadorlexico.ScannerNosso;
 import br.com.unicap.compiladores.analisadorlexico.Token;
 import br.com.unicap.compiladores.analisadorlexico.TokensID;
+import br.com.unicap.compiladores.excecoes.SyntacticException;
 
 public class Parser {
     private Token token;
@@ -31,7 +32,7 @@ public class Parser {
         if(isTokenTipoVar(token.getTipo())) {
             nomeClasse();
         } else {
-            //erro
+            throw new SyntacticException(SyntacticException.ERRO_TYPE_CLASS, s.getLinha(), s.getColuna());
         }
     }
 
@@ -44,7 +45,7 @@ public class Parser {
             abreBloco();
         }
         else {
-            //erro;
+            throw new SyntacticException(SyntacticException.ERRO_NAME_CLASS, s.getLinha(), s.getColuna());
         }
     }
 
@@ -55,13 +56,13 @@ public class Parser {
             fechaBloco();
         }
         else {
-            //erro
+            throw new SyntacticException(SyntacticException.ERRO_OPEN_BLOCK, s.getLinha(), s.getColuna());
         }
     }
 
     private void fechaBloco() {
         if(token.getTipo() != TokensID.TK_SEPARADOR_FECHA_CHA) {
-            //erro;
+            throw new SyntacticException(SyntacticException.ERRO_CLOSE_BLOCK, s.getLinha(), s.getColuna());
         }
     }
 

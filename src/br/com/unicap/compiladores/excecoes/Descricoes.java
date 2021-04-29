@@ -11,6 +11,11 @@ class Descricoes {
         descricaoHT.put(LexicalException.ERRO_FLOAT, "Float inválido (somente numerais antes e após o ponto).");
         descricaoHT.put(LexicalException.ERRO_CHAR, "Caracter mal formado (somente um caracter entre aspas simples).");
         descricaoHT.put(LexicalException.ERRO_ESTADO, "Erro de estado (caracter deve se removido)");
+       
+        descricaoHT.put(SyntacticException.ERRO_TYPE_CLASS, "Identificador fora do padrão (letras, underline e digitos).");
+        descricaoHT.put(SyntacticException.ERRO_NAME_CLASS, "Inteiro inválido (somente numerais permitidos).");
+        descricaoHT.put(SyntacticException.ERRO_OPEN_BLOCK, "Float inválido (somente numerais antes e após o ponto).");
+        descricaoHT.put(SyntacticException.ERRO_CLOSE_BLOCK, "Caracter mal formado (somente um caracter entre aspas simples).");
     }
 
     Descricoes() {
