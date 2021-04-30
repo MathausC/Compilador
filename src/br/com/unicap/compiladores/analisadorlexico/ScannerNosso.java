@@ -278,4 +278,10 @@ public class ScannerNosso extends Scan{
         }
         return ret;
     }
+    public int getLinha(){
+        return this.linha;
+    }
+    public int getColuna(){
+        return this.coluna;
+    }
 }    
