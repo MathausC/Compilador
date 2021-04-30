@@ -1,15 +1,16 @@
 package br.com.unicap.compiladores.parser;
 
-import java.util.ArrayList;
 
 import br.com.unicap.compiladores.analisadorlexico.ScannerNosso;
 import br.com.unicap.compiladores.analisadorlexico.Token;
 import br.com.unicap.compiladores.analisadorlexico.TokensID;
+import java.util.Stack;
 
 public class Parser {
     private Token token;
     private static Parser p;
     private static ScannerNosso s;
+    private Stack<Token> pilha;
 
     private Parser(ScannerNosso s) {
         Parser.s = s;
