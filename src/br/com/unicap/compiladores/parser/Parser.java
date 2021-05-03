@@ -30,7 +30,11 @@ public class Parser extends Terminal{
         token = s.getToken();
         if(T(token.getTipo())) {
             nomeClasse();
-        } else {
+        }
+        if(token.getTipo() == TokensID.TK_EOF) {
+            return;
+        } 
+        else {
             throw new SyntacticException(SyntacticException.ERRO_TYPE_CLASS, s.getLinha(), s.getColuna());
         }
     }
@@ -62,23 +66,23 @@ public class Parser extends Terminal{
     private void fechaBloco() {
         if(token.getTipo() != TokensID.TK_SEPARADOR_FECHA_CHA) {
             throw new SyntacticException(SyntacticException.ERRO_CLOSE_BLOCK, s.getLinha(), s.getColuna());
+        } else {
+            token = s.getToken();
+            return;
         }
     }
     
     private void bloco() {
         token = s.getToken();
-        if(T(token.getTipo())){
-            V();
-        }else if(token.getTipo() == TokensID.TK_PR_IF){
-            IF();
-        }else if(token.getTipo() == TokensID.TK_PR_WHILE){
-            C();
-        }else if(token.getTipo() == TokensID.TK_PR_DO){
-            D();
-        }else if (token.getTipo() == TokensID.TK_IDENTIFICADOR){
-            AT();
-        }else{}
-        
+        while(true) {
+            if(T(token.getTipo())) V();
+            else if(token.getTipo() == TokensID.TK_PR_IF) IF();
+            else if(token.getTipo() == TokensID.TK_PR_WHILE) C();
+            else if(token.getTipo() == TokensID.TK_PR_DO) D();
+            else if (token.getTipo() == TokensID.TK_IDENTIFICADOR) AT();
+            else if(token.getTipo() == TokensID.TK_SEPARADOR_FECHA_CHA) return;
+            else /*erro*/;
+        }
     }
 
     private void V(){

@@ -32,7 +32,7 @@ public class ScannerNosso extends Scan{
         do {
             t = getToken();
             tokens.add(t);
-        }while(t != null);
+        }while(t.getTipo() != TokensID.TK_EOF);
         return tokens;
     }
 
@@ -76,7 +76,7 @@ public class ScannerNosso extends Scan{
                 case 4: return getTokenOpRel();
                 case 5: return getTokenOpMat();
                 case 6: return getTokenSep();
-                case 7: return null;
+                case 7: return getEndOfFile();
                 default: throw new LexicalException(LexicalException.ERRO_ESTADO, linha, coluna);
             }
         }
@@ -283,5 +283,9 @@ public class ScannerNosso extends Scan{
     }
     public int getColuna(){
         return this.coluna;
+    }
+
+    private Token getEndOfFile() {
+        return new Token(TokensID.TK_EOF, "Fim do Arquivo");
     }
 }    

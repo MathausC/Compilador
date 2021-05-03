@@ -35,4 +35,5 @@ public enum TokensID {
     TK_ATRIBUICAO,
     TK_CHAR,
     TK_CLASS,
+    TK_EOF,
 }
