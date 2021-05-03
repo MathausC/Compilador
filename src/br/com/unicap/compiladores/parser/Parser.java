@@ -68,7 +68,40 @@ public class Parser {
     }
 
     private void bloco() {
+        token = s.getToken();
+        if(isTokenTipoVar(token.getTipo())){
+            V();
+        }else if(token.getTipo() == TokensID.TK_PR_IF){
+            IF();
+        }else if(token.getTipo() == TokensID.TK_PR_WHILE){
+            C();
+        }else if(token.getTipo() == TokensID.TK_PR_DO){
+            D();
+        }else{
+            //erro
+        }
 
+    }
+    private void V(){
+        token = s.getToken();
+        if(token.getTipo() == TokensID.TK_IDENTIFICADOR){
+            token = s.getToken();
+            if(token.getTipo() == TokensID.TK_ATRIBUICAO){
+                E();
+            }else{ /*erro*/}
+        }else{/*erro*/ }
+    }
+    private void IF(){
+
+    }
+    private void C(){
+
+    }
+    private void D(){
+
+    }
+    private void E(){
+        //conta 
     }
 
     private boolean isTokenTipoVar(TokensID t) {
