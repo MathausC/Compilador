@@ -93,7 +93,7 @@ public class Parser extends Terminal{
             else AT();
         }else{/*errothrow new SyntacticException(SyntacticException.ERRO_DECLARATION, s.getLinha(), s.getColuna());*/  }
     }
-
+    
     private void Vl() {
         token = s.getToken();
         if(token.getTipo() == TokensID.TK_IDENTIFICADOR) {
@@ -103,59 +103,71 @@ public class Parser extends Terminal{
             else /*erro*/;
         } else /*erro*/;
     }
-
-    private void AT(){
-            if(token.getTipo() == TokensID.TK_SEPARADOR_PONTO);
-            else if (token.getTipo() == TokensID.TK_ATRIBUICAO){
-                E();
-                if(token.getTipo() == TokensID.TK_SEPARADOR_PONTO);
-                else /*erro throw new SyntacticException(SyntacticException.ERRO_CLOSE_DECLARATION, s.getLinha(), s.getColuna());;*/;
-            }else { /*erro throw new SyntacticException(SyntacticException.ERRO_ATTRIBUTION, s.getLinha(), s.getColuna());*/}
-    }
-
-    private void IF(){
-        token = s.getToken();
-        if(token.getTipo() == TokensID.TK_SEPARADOR_ABRE_PAR) {
-            C();
-        }
-    }
     
-    private void C(){
-        token = s.getToken();
-        if(token.getTipo() == TokensID.TK_PR_TRUE || token.getTipo() == TokensID.TK_PR_FALSE);
-        else {
-            E();
-            if(OR(token.getTipo())) {
-                E();
-                if(token.getTipo() == TokensID.TK_SEPARADOR_FECHA_PAR) { 
-                    abreBloco();
-                } else {
-                    //erro throw new SyntacticException(SyntacticException.ERRO_CLOSE_COMPARING, s.getLinha(), s.getColuna());
-                }
-            } else {
-                //erro; throw new SyntacticException(SyntacticException.ERRO_TYPE_COMPARING, s.getLinha(), s.getColuna());
+    private void AT(){
+        if(token.getTipo() == TokensID.TK_SEPARADOR_PONTO);
+        else if (token.getTipo() == TokensID.TK_ATRIBUICAO){
+            token = s.getToken();
+            switch(token.getTipo()) {
+                case TK_PR_TRUE: break;
+                case TK_PR_FALSE: break;
+                case TK_CHAR: break;
+                case TK_NUMERO_INT: E(); break;
+                case TK_NUMERO_FLT: E(); break;
+                case TK_IDENTIFICADOR: E(); break;
+                case TK_SEPARADOR_ABRE_PAR: E(); break;
+                default: /*erro*/; break;
+            }
+            if(token.getTipo() == TokensID.TK_SEPARADOR_PONTO);
+            else /*erro throw new SyntacticException(SyntacticException.ERRO_CLOSE_DECLARATION, s.getLinha(), s.getColuna());;*/;
+        }else { /*erro throw new SyntacticException(SyntacticException.ERRO_ATTRIBUTION, s.getLinha(), s.getColuna());*/}
+    }
+        
+        private void IF(){
+            token = s.getToken();
+            if(token.getTipo() == TokensID.TK_SEPARADOR_ABRE_PAR) {
+                C();
             }
         }
-    }
-    
-    private void D(){
-        abreBloco();
-        if(token.getTipo() == TokensID.TK_PR_WHILE) {
+        
+        private void C(){
+            token = s.getToken();
+            if(token.getTipo() == TokensID.TK_PR_TRUE || token.getTipo() == TokensID.TK_PR_FALSE);
+            else N();
+        }
+
+        private void N() {
             E();
-            if(OR(token.getTipo())) {
+                if(OR(token.getTipo())) {
+                    E();
+                    if(token.getTipo() == TokensID.TK_SEPARADOR_FECHA_PAR) { 
+                        abreBloco();
+                    } else {
+                        //erro throw new SyntacticException(SyntacticException.ERRO_CLOSE_COMPARING, s.getLinha(), s.getColuna());
+                    }
+                } else {
+                    //erro; throw new SyntacticException(SyntacticException.ERRO_TYPE_COMPARING, s.getLinha(), s.getColuna());
+                }
+        }
+        
+        private void D(){
+            abreBloco();
+            if(token.getTipo() == TokensID.TK_PR_WHILE) {
                 E();
-                if(token.getTipo() == TokensID.TK_SEPARADOR_FECHA_PAR) {
-                    token = s.getToken();
-                    if(token.getTipo() == TokensID.TK_SEPARADOR_PONTO) {
-                        return;
+                if(OR(token.getTipo())) {
+                    E();
+                    if(token.getTipo() == TokensID.TK_SEPARADOR_FECHA_PAR) {
+                        token = s.getToken();
+                        if(token.getTipo() == TokensID.TK_SEPARADOR_PONTO) {
+                            return;
+                        } else {
+                            //erro
+                        }
                     } else {
                         //erro
                     }
                 } else {
-                    //erro
-                }
-            } else {
-                //erro;
+                    //erro;
             }
         } else {
             //erro
@@ -163,7 +175,6 @@ public class Parser extends Terminal{
     }
 
     private void E(){
-        token = s.getToken();
         if(ID(token.getTipo())) {
             A();
         }else if (token.getTipo() == TokensID.TK_SEPARADOR_ABRE_PAR) {
