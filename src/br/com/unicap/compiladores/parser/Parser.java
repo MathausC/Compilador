@@ -7,7 +7,7 @@ import br.com.unicap.compiladores.analisadorlexico.TokensID;
 import br.com.unicap.compiladores.excecoes.SyntacticException;
 import java.util.Stack;
 
-public class Parser {
+public class Parser extends Terminal{
     private Token token;
     private static Parser p;
     private static ScannerNosso s;
@@ -122,7 +122,7 @@ public class Parser {
             /*erro*/
         }
     }
-
+    
     private void F() {
         token = s.getToken();
         if(token.getTipo() == TokensID.TK_IDENTIFICADOR) {
