@@ -26,6 +26,10 @@ public class Parser extends Terminal{
         return p;
     }
 
+    public void getParser() {
+        inicioClass();
+    }
+
     public void inicioClass() {
         token = s.getToken();
         if(T(token.getTipo())) {
