@@ -7,7 +7,7 @@ import br.com.unicap.compiladores.analisadorlexico.TokensID;
 import br.com.unicap.compiladores.excecoes.SyntacticException;
 import java.util.Stack;
 
-public class Parser {
+public class Parser extends Terminal{
     private Token token;
     private static Parser p;
     private static ScannerNosso s;
@@ -30,7 +30,7 @@ public class Parser {
 
     private void inicioClass() {
         token = s.getToken();
-        if(isTokenTipoVar(token.getTipo())) {
+        if(T(token.getTipo())) {
             nomeClasse();
         } else {
             throw new SyntacticException(SyntacticException.ERRO_TYPE_CLASS, s.getLinha(), s.getColuna());
@@ -69,7 +69,7 @@ public class Parser {
 
     private void bloco() {
         token = s.getToken();
-        if(isTokenTipoVar(token.getTipo())){
+        if(T(token.getTipo())){
             V();
         }else if(token.getTipo() == TokensID.TK_PR_IF){
             IF();
@@ -104,12 +104,5 @@ public class Parser {
         //conta 
     }
 
-    private boolean isTokenTipoVar(TokensID t) {
-        switch(t) {
-            case TK_PR_INT: return true;
-            case TK_PR_FLOAT: return true;
-            case TK_PR_CHAR: return true;
-            default: return false; 
-        }
-    }
+    
 }
