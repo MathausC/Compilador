@@ -5,13 +5,11 @@ import br.com.unicap.compiladores.analisadorlexico.ScannerNosso;
 import br.com.unicap.compiladores.analisadorlexico.Token;
 import br.com.unicap.compiladores.analisadorlexico.TokensID;
 import br.com.unicap.compiladores.excecoes.SyntacticException;
-import java.util.Stack;
 
 public class Parser extends Terminal{
     private Token token;
     private static Parser p;
     private static ScannerNosso s;
-    private Stack<Token> pilha;
 
     private Parser(ScannerNosso s) {
         Parser.s = s;
@@ -28,7 +26,7 @@ public class Parser extends Terminal{
         return p;
     }
 
-    private void inicioClass() {
+    public void inicioClass() {
         token = s.getToken();
         if(T(token.getTipo())) {
             nomeClasse();
@@ -66,7 +64,7 @@ public class Parser extends Terminal{
             throw new SyntacticException(SyntacticException.ERRO_CLOSE_BLOCK, s.getLinha(), s.getColuna());
         }
     }
-
+    
     private void bloco() {
         token = s.getToken();
         if(T(token.getTipo())){
@@ -80,55 +78,128 @@ public class Parser extends Terminal{
         }else{
             //erro
         }
-
+        
     }
+
     private void V(){
         token = s.getToken();
         if(token.getTipo() == TokensID.TK_IDENTIFICADOR){
             token = s.getToken();
-            if(token.getTipo() == TokensID.TK_SEPARADOR_PONTO);
+            if(token.getTipo() == TokensID.TK_SEPARADOR_VIRGULA);
             else if (token.getTipo() == TokensID.TK_ATRIBUICAO){
                 E();
+                if(token.getTipo() == TokensID.TK_SEPARADOR_VIRGULA);
+                else /*erro*/;
             }else { /*erro*/}
         }else{/*erro*/ }
     }
     private void IF(){
-
+        token = s.getToken();
+        if(token.getTipo() == TokensID.TK_SEPARADOR_ABRE_PAR) {
+            C();
+        }
     }
+
     private void C(){
-
+        E();
+        if(OR(token.getTipo())) {
+            E();
+            if(token.getTipo() == TokensID.TK_SEPARADOR_FECHA_PAR) { 
+                abreBloco();
+            } else {
+                //erro
+            }
+        } else {
+            //erro;
+        }
     }
+
     private void D(){
-
+        abreBloco();
+        if(token.getTipo() == TokensID.TK_PR_WHILE) {
+            E();
+            if(OR(token.getTipo())) {
+                E();
+                if(token.getTipo() == TokensID.TK_SEPARADOR_FECHA_PAR) {
+                    token = s.getToken();
+                    if(token.getTipo() == TokensID.TK_SEPARADOR_VIRGULA) {
+                        return;
+                    } else {
+                        //erro
+                    }
+                } else {
+                    //erro
+                }
+            } else {
+                //erro;
+            }
+        } else {
+            //erro
+        }
     }
+
     private void E(){
         token = s.getToken();
-        if(token.getTipo() == TokensID.TK_NUMERO_INT || token.getTipo() == TokensID.TK_NUMERO_FLT || 
-        token.getTipo() == TokensID.TK_IDENTIFICADOR) {
+        if(ID(token.getTipo())) {
             A();
         }else if (token.getTipo() == TokensID.TK_SEPARADOR_ABRE_PAR) {
             B();
-        } else if(token.getTipo() == TokensID.TK_SEPARADOR_PONTO){
-            /*erro*/
         }
     }
 
     private void A() {
         token = s.getToken();
-        if(token.getTipo() == TokensID.TK_OPER_MAT_DIV || token.getTipo() == TokensID.TK_OPER_MAT_MULT ||
-         token.getTipo() == TokensID.TK_OPER_MAT_SOMA  || token.getTipo() == TokensID.TK_OPER_MAT_SUB) {
+        if(OP(token.getTipo())) {
             F();
         } else {
             /*erro*/
         }
     }
-    
+
     private void F() {
         token = s.getToken();
-        if(token.getTipo() == TokensID.TK_IDENTIFICADOR) {
+        if(ID(token.getTipo())) {
             A();
         }else if(token.getTipo() == TokensID.TK_SEPARADOR_ABRE_PAR) {
             B();
+        } else {
+            return;
+        }
+    }
+
+    private void B() {
+        if(ID(token.getTipo())) {
+            A();
+            if(token.getTipo() == TokensID.TK_SEPARADOR_FECHA_PAR) {
+                /*Token t;
+                while(token.getTipo() == TokensID.TK_SEPARADOR_FECHA_PAR){
+                    t = pilha.pop();
+                    if(t != null){
+                        token = s.getToken();
+                    }else {
+                        //erro
+                    }
+                }*/
+                if(OP(token.getTipo())) {
+                    F();
+                }
+            }
+        }else if(token.getTipo() == TokensID.TK_SEPARADOR_ABRE_PAR) {
+            B();if(token.getTipo() == TokensID.TK_SEPARADOR_FECHA_PAR) {
+                /*Token t;
+                Token t;
+                while(token.getTipo() == TokensID.TK_SEPARADOR_FECHA_PAR){
+                    t = pilha.pop();
+                    if(t != null){
+                        token = s.getToken();
+                    }else {
+                        //erro
+                    }
+                }*/
+                if(OP(token.getTipo())) {
+                    F();
+                }
+            }
         }
     }
 }
