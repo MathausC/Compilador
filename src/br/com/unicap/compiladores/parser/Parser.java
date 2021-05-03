@@ -75,23 +75,17 @@ public class Parser extends Terminal{
             C();
         }else if(token.getTipo() == TokensID.TK_PR_DO){
             D();
-        }else{
-            //erro
-        }
+        }else if (token.getTipo() == TokensID.TK_IDENTIFICADOR){
+            AT();
+        }else{}
         
     }
 
     private void V(){
         token = s.getToken();
         if(token.getTipo() == TokensID.TK_IDENTIFICADOR){
-            token = s.getToken();
-            if(token.getTipo() == TokensID.TK_SEPARADOR_VIRGULA);
-            else if (token.getTipo() == TokensID.TK_ATRIBUICAO){
-                E();
-                if(token.getTipo() == TokensID.TK_SEPARADOR_VIRGULA);
-                else /*erro*/;
-            }else { /*erro*/}
-        }else{/*erro*/ }
+           AT();
+        }else{/*errothrow new SyntacticException(SyntacticException.ERRO_DECLARATION, s.getLinha(), s.getColuna());*/  }
     }
     private void IF(){
         token = s.getToken();
@@ -107,10 +101,10 @@ public class Parser extends Terminal{
             if(token.getTipo() == TokensID.TK_SEPARADOR_FECHA_PAR) { 
                 abreBloco();
             } else {
-                //erro
+                //erro throw new SyntacticException(SyntacticException.ERRO_CLOSE_COMPARING, s.getLinha(), s.getColuna());
             }
         } else {
-            //erro;
+            //erro; throw new SyntacticException(SyntacticException.ERRO_TYPE_COMPARING, s.getLinha(), s.getColuna());
         }
     }
 
@@ -165,6 +159,15 @@ public class Parser extends Terminal{
         } else {
             return;
         }
+    }
+    private void AT(){
+        token = s.getToken();
+            if(token.getTipo() == TokensID.TK_SEPARADOR_VIRGULA);
+            else if (token.getTipo() == TokensID.TK_ATRIBUICAO){
+                E();
+                if(token.getTipo() == TokensID.TK_SEPARADOR_VIRGULA);
+                else /*erro throw new SyntacticException(SyntacticException.ERRO_CLOSE_DECLARATION, s.getLinha(), s.getColuna());;*/;
+            }else { /*erro throw new SyntacticException(SyntacticException.ERRO_ATTRIBUTION, s.getLinha(), s.getColuna());*/}
     }
 
     private void B() {
