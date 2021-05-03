@@ -31,6 +31,7 @@ public abstract class Terminal {
             case TK_PR_INT: return true;
             case TK_PR_FLOAT: return true;
             case TK_PR_CHAR: return true;
+            case TK_PR_BOOL: return true;
             default: return false; 
         }
     }

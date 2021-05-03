@@ -73,8 +73,8 @@ public class Parser extends Terminal{
     }
     
     private void bloco() {
-        token = s.getToken();
         while(true) {
+            token = s.getToken();
             if(T(token.getTipo())) V();
             else if(token.getTipo() == TokensID.TK_PR_IF) IF();
             else if(token.getTipo() == TokensID.TK_PR_WHILE) C();
@@ -84,34 +84,60 @@ public class Parser extends Terminal{
             else /*erro*/;
         }
     }
-
+    
     private void V(){
         token = s.getToken();
         if(token.getTipo() == TokensID.TK_IDENTIFICADOR){
-           AT();
+            token = s.getToken();
+            if(token.getTipo() == TokensID.TK_SEPARADOR_VIRGULA) Vl();
+            else AT();
         }else{/*errothrow new SyntacticException(SyntacticException.ERRO_DECLARATION, s.getLinha(), s.getColuna());*/  }
     }
+
+    private void Vl() {
+        token = s.getToken();
+        if(token.getTipo() == TokensID.TK_IDENTIFICADOR) {
+            token = s.getToken();
+            if(token.getTipo() == TokensID.TK_SEPARADOR_VIRGULA) Vl();
+            else if(token.getTipo() == TokensID.TK_SEPARADOR_PONTO) return;
+            else /*erro*/;
+        } else /*erro*/;
+    }
+
+    private void AT(){
+            if(token.getTipo() == TokensID.TK_SEPARADOR_PONTO);
+            else if (token.getTipo() == TokensID.TK_ATRIBUICAO){
+                E();
+                if(token.getTipo() == TokensID.TK_SEPARADOR_PONTO);
+                else /*erro throw new SyntacticException(SyntacticException.ERRO_CLOSE_DECLARATION, s.getLinha(), s.getColuna());;*/;
+            }else { /*erro throw new SyntacticException(SyntacticException.ERRO_ATTRIBUTION, s.getLinha(), s.getColuna());*/}
+    }
+
     private void IF(){
         token = s.getToken();
         if(token.getTipo() == TokensID.TK_SEPARADOR_ABRE_PAR) {
             C();
         }
     }
-
+    
     private void C(){
-        E();
-        if(OR(token.getTipo())) {
+        token = s.getToken();
+        if(token.getTipo() == TokensID.TK_PR_TRUE || token.getTipo() == TokensID.TK_PR_FALSE);
+        else {
             E();
-            if(token.getTipo() == TokensID.TK_SEPARADOR_FECHA_PAR) { 
-                abreBloco();
+            if(OR(token.getTipo())) {
+                E();
+                if(token.getTipo() == TokensID.TK_SEPARADOR_FECHA_PAR) { 
+                    abreBloco();
+                } else {
+                    //erro throw new SyntacticException(SyntacticException.ERRO_CLOSE_COMPARING, s.getLinha(), s.getColuna());
+                }
             } else {
-                //erro throw new SyntacticException(SyntacticException.ERRO_CLOSE_COMPARING, s.getLinha(), s.getColuna());
+                //erro; throw new SyntacticException(SyntacticException.ERRO_TYPE_COMPARING, s.getLinha(), s.getColuna());
             }
-        } else {
-            //erro; throw new SyntacticException(SyntacticException.ERRO_TYPE_COMPARING, s.getLinha(), s.getColuna());
         }
     }
-
+    
     private void D(){
         abreBloco();
         if(token.getTipo() == TokensID.TK_PR_WHILE) {
@@ -120,7 +146,7 @@ public class Parser extends Terminal{
                 E();
                 if(token.getTipo() == TokensID.TK_SEPARADOR_FECHA_PAR) {
                     token = s.getToken();
-                    if(token.getTipo() == TokensID.TK_SEPARADOR_VIRGULA) {
+                    if(token.getTipo() == TokensID.TK_SEPARADOR_PONTO) {
                         return;
                     } else {
                         //erro
@@ -143,6 +169,9 @@ public class Parser extends Terminal{
         }else if (token.getTipo() == TokensID.TK_SEPARADOR_ABRE_PAR) {
             B();
         }
+        else {
+            //erro;
+        }
     }
 
     private void A() {
@@ -163,15 +192,6 @@ public class Parser extends Terminal{
         } else {
             return;
         }
-    }
-    private void AT(){
-        token = s.getToken();
-            if(token.getTipo() == TokensID.TK_SEPARADOR_VIRGULA);
-            else if (token.getTipo() == TokensID.TK_ATRIBUICAO){
-                E();
-                if(token.getTipo() == TokensID.TK_SEPARADOR_VIRGULA);
-                else /*erro throw new SyntacticException(SyntacticException.ERRO_CLOSE_DECLARATION, s.getLinha(), s.getColuna());;*/;
-            }else { /*erro throw new SyntacticException(SyntacticException.ERRO_ATTRIBUTION, s.getLinha(), s.getColuna());*/}
     }
 
     private void B() {

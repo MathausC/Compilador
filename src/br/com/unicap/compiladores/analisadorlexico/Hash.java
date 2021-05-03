@@ -23,6 +23,9 @@ class Hash {
         pRHashtable.put("int", TokensID.TK_PR_INT);
         pRHashtable.put("float", TokensID.TK_PR_FLOAT);
         pRHashtable.put("char", TokensID.TK_PR_CHAR);
+        pRHashtable.put("true", TokensID.TK_PR_TRUE);
+        pRHashtable.put("false", TokensID.TK_PR_FALSE);
+        pRHashtable.put("bool", TokensID.TK_PR_BOOL);
     }
 
     protected static Hash getCOntrutor() {

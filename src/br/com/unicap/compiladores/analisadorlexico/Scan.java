@@ -52,6 +52,10 @@ public abstract class Scan {
     protected boolean isOpenBracket(char c) {
         return c == '{';
     }
+
+    protected boolean isDotComa(char c) {
+        return c == ';';
+    }
     
     protected boolean isCloseBracket(char c) {
         return c == '}';
