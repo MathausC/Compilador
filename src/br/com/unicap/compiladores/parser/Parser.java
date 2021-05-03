@@ -30,7 +30,7 @@ public class Parser {
 
     private void inicioClass() {
         token = s.getToken();
-        if(isTokenTipoVar(token.getTipo())) {
+        if(T(token.getTipo())) {
             nomeClasse();
         } else {
             throw new SyntacticException(SyntacticException.ERRO_TYPE_CLASS, s.getLinha(), s.getColuna());
@@ -69,7 +69,7 @@ public class Parser {
 
     private void bloco() {
         token = s.getToken();
-        if(isTokenTipoVar(token.getTipo())){
+        if(T(token.getTipo())){
             V();
         }else if(token.getTipo() == TokensID.TK_PR_IF){
             IF();
@@ -86,9 +86,10 @@ public class Parser {
         token = s.getToken();
         if(token.getTipo() == TokensID.TK_IDENTIFICADOR){
             token = s.getToken();
-            if(token.getTipo() == TokensID.TK_ATRIBUICAO){
+            if(token.getTipo() == TokensID.TK_SEPARADOR_PONTO);
+            else if (token.getTipo() == TokensID.TK_ATRIBUICAO){
                 E();
-            }else{ /*erro*/}
+            }else { /*erro*/}
         }else{/*erro*/ }
     }
     private void IF(){
@@ -101,15 +102,33 @@ public class Parser {
 
     }
     private void E(){
-        //conta 
+        token = s.getToken();
+        if(token.getTipo() == TokensID.TK_NUMERO_INT || token.getTipo() == TokensID.TK_NUMERO_FLT || 
+        token.getTipo() == TokensID.TK_IDENTIFICADOR) {
+            A();
+        }else if (token.getTipo() == TokensID.TK_SEPARADOR_ABRE_PAR) {
+            B();
+        } else if(token.getTipo() == TokensID.TK_SEPARADOR_PONTO){
+            /*erro*/
+        }
     }
 
-    private boolean isTokenTipoVar(TokensID t) {
-        switch(t) {
-            case TK_PR_INT: return true;
-            case TK_PR_FLOAT: return true;
-            case TK_PR_CHAR: return true;
-            default: return false; 
+    private void A() {
+        token = s.getToken();
+        if(token.getTipo() == TokensID.TK_OPER_MAT_DIV || token.getTipo() == TokensID.TK_OPER_MAT_MULT ||
+         token.getTipo() == TokensID.TK_OPER_MAT_SOMA  || token.getTipo() == TokensID.TK_OPER_MAT_SUB) {
+            F();
+        } else {
+            /*erro*/
+        }
+    }
+
+    private void F() {
+        token = s.getToken();
+        if(token.getTipo() == TokensID.TK_IDENTIFICADOR) {
+            A();
+        }else if(token.getTipo() == TokensID.TK_SEPARADOR_ABRE_PAR) {
+            B();
         }
     }
 }

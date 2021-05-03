@@ -2,6 +2,9 @@ package br.com.unicap.compiladores.analisadorlexico;
 
 public enum TokensID {
     TK_IDENTIFICADOR,
+    TK_ID_INT,
+    TK_ID_FLOAT,
+    TK_ID_CHAR,
     TK_PR_MAIN,
     TK_PR_IF,
     TK_PR_ELSE,
