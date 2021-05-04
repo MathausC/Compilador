@@ -14,6 +14,8 @@ public class SyntacticException extends RuntimeException{
     public final static int ERRO_CONDICIONAL_CLOSE = 14;
     public final static int ERRO_CONDICIONAL_OPEN = 15;
     public final static int ERRO_EXPRESSION_FORMATION = 16;
+    public final static int STATIMANT_MISSING = 17;
+    public final static int CONDICIONAL_MISSING = 18;
     
     
     
