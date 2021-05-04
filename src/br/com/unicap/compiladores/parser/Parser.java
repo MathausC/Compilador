@@ -37,7 +37,7 @@ public class Parser extends Terminal{
             token = s.getToken();
         }
         else {
-            // throw new SyntacticException(SyntacticException.ERRO_TYPE_CLASS, s.getLinha(), s.getColuna());
+             throw new SyntacticException(SyntacticException.ERRO_TYPE_CLASS, s.getLinha(), s.getColuna());
         }
         if(token.getTipo() == TokensID.TK_EOF) {
             return;
@@ -88,7 +88,7 @@ public class Parser extends Terminal{
             else if(token.getTipo() == TokensID.TK_PR_DO) D();
             else if (token.getTipo() == TokensID.TK_IDENTIFICADOR) AT();
             else if(token.getTipo() == TokensID.TK_SEPARADOR_FECHA_CHA) return;
-            //else /*erro throw new SyntacticException(SyntacticException.ERRO_DECLARATION, s.getLinha(), s.getColuna());*/;
+            else  throw new SyntacticException(SyntacticException.ERRO_DECLARATION, s.getLinha(), s.getColuna());;
         }
     }
     
@@ -98,7 +98,7 @@ public class Parser extends Terminal{
             token = s.getToken();
             if(token.getTipo() == TokensID.TK_SEPARADOR_VIRGULA) Vl();
             else AT();
-        }else{/*errothrow new SyntacticException(SyntacticException.ERRO_DECLARATION, s.getLinha(), s.getColuna());*/  }
+        }else{throw new SyntacticException(SyntacticException.ERRO_DECLARATION, s.getLinha(), s.getColuna()); }
     }
     
     private void Vl() {
@@ -107,8 +107,8 @@ public class Parser extends Terminal{
             token = s.getToken();
             if(token.getTipo() == TokensID.TK_SEPARADOR_VIRGULA) Vl();
             else if(token.getTipo() == TokensID.TK_SEPARADOR_PONTO) return;
-            else /*erro throw new SyntacticException(SyntacticException.ERRO_DECLARATION, s.getLinha(), s.getColuna());*/;
-        } else /*erro throw new SyntacticException(SyntacticException.ERRO_DECLARATION, s.getLinha(), s.getColuna());*/;
+            else throw new SyntacticException(SyntacticException.ERRO_DECLARATION, s.getLinha(), s.getColuna());
+        } else throw new SyntacticException(SyntacticException.ERRO_DECLARATION, s.getLinha(), s.getColuna());
     }
     
     private void AT(){
@@ -123,11 +123,11 @@ public class Parser extends Terminal{
                 case TK_NUMERO_FLT: E(); break;
                 case TK_IDENTIFICADOR: E(); break;
                 case TK_SEPARADOR_ABRE_PAR: E(); break;
-                default: /*erro erro throw new SyntacticException(SyntacticException.ERRO_ATTRIBUTION, s.getLinha(), s.getColuna());*/; break;
+                default: throw new SyntacticException(SyntacticException.ERRO_ATTRIBUTION, s.getLinha(), s.getColuna()); 
             }
             if(token.getTipo() == TokensID.TK_SEPARADOR_PONTO);
-            else /*erro throw new SyntacticException(SyntacticException.ERRO_CLOSE_DECLARATION, s.getLinha(), s.getColuna());;*/;
-        }else { /*erro throw new SyntacticException(SyntacticException.ERRO_ATTRIBUTION, s.getLinha(), s.getColuna());*/}
+            else  throw new SyntacticException(SyntacticException.ERRO_CLOSE_DECLARATION, s.getLinha(), s.getColuna());
+        }else { throw new SyntacticException(SyntacticException.ERRO_ATTRIBUTION, s.getLinha(), s.getColuna());}
     }
         
     private void IF(){
@@ -150,10 +150,10 @@ public class Parser extends Terminal{
                 if(token.getTipo() == TokensID.TK_SEPARADOR_FECHA_PAR) { 
                     abreBloco();
                 } else {
-                    //erro throw new SyntacticException(SyntacticException.ERRO_CLOSE_COMPARING, s.getLinha(), s.getColuna());
+                     throw new SyntacticException(SyntacticException.ERRO_CLOSE_COMPARING, s.getLinha(), s.getColuna());
                 }
             } else {
-                //erro; throw new SyntacticException(SyntacticException.ERRO_TYPE_COMPARING, s.getLinha(), s.getColuna());
+                 throw new SyntacticException(SyntacticException.ERRO_TYPE_COMPARING, s.getLinha(), s.getColuna());
             }
     }
  
@@ -173,17 +173,17 @@ public class Parser extends Terminal{
                                 if(token.getTipo() == TokensID.TK_SEPARADOR_PONTO) {
                                     return;
                                 } else {
-                                    //throw new SyntacticException(SyntacticException.ERRO_CONDICIONAL_CLOSE, s.getLinha(), s.getColuna());
+                                    throw new SyntacticException(SyntacticException.ERRO_CONDICIONAL_CLOSE, s.getLinha(), s.getColuna());
                                 }
                             } else {
-                                //erro throw new SyntacticException(SyntacticException.ERRO_CONDICIONAL_CLOSE, s.getLinha(), s.getColuna());
+                                throw new SyntacticException(SyntacticException.ERRO_CONDICIONAL_CLOSE, s.getLinha(), s.getColuna());
                             }
                         } else {
-                            //erro throw new SyntacticException(SyntacticException.ERRO_COMPARATION_TYPE, s.getLinha(), s.getColuna());
+                             throw new SyntacticException(SyntacticException.ERRO_TYPE_COMPARING, s.getLinha(), s.getColuna());
                         }
                     }
                 }else{
-                    //erro throw new SyntacticException(SyntacticException.ERRO_CONDICIONAL_OPEN, s.getLinha(), s.getColuna());
+                     throw new SyntacticException(SyntacticException.ERRO_CONDICIONAL_OPEN, s.getLinha(), s.getColuna());
                 }
             }
         }
@@ -195,7 +195,7 @@ public class Parser extends Terminal{
             B();
         }
         else {
-            //erro throw new SyntacticException(SyntacticException.ERRO_EXPRETION_FORMATION, s.getLinha(), s.getColuna());
+             throw new SyntacticException(SyntacticException.ERRO_EXPRESSION_FORMATION, s.getLinha(), s.getColuna());
         }
     }
 
@@ -204,7 +204,7 @@ public class Parser extends Terminal{
         if(OP(token.getTipo())) {
             F();
         } else {
-            // throw new SyntacticException(SyntacticException.ERRO_EXPRETION_FORMATION, s.getLinha(), s.getColuna());
+             throw new SyntacticException(SyntacticException.ERRO_EXPRESSION_FORMATION, s.getLinha(), s.getColuna());
         }
     }
 
@@ -223,45 +223,28 @@ public class Parser extends Terminal{
         if(ID(token.getTipo())) {
             A();
             if(token.getTipo() == TokensID.TK_SEPARADOR_FECHA_PAR) {
-                /*Token t;
-                while(token.getTipo() == TokensID.TK_SEPARADOR_FECHA_PAR){
-                    t = pilha.pop();
-                    if(t != null){
-                        token = s.getToken();
-                    }else {
-                        //erro
-                    }
-                }*/
+                
                 if(OP(token.getTipo())) {
                     F();
                 } else {
-                    // throw new SyntacticException(SyntacticException.ERRO_EXPRETION_FORMATION, s.getLinha(), s.getColuna());
+                     throw new SyntacticException(SyntacticException.ERRO_EXPRESSION_FORMATION, s.getLinha(), s.getColuna());
                 }
             }
             else {
-                // throw new SyntacticException(SyntacticException.ERRO_EXPRETION_FORMATION, s.getLinha(), s.getColuna());
+                 throw new SyntacticException(SyntacticException.ERRO_EXPRESSION_FORMATION, s.getLinha(), s.getColuna());
             }
         }else if(token.getTipo() == TokensID.TK_SEPARADOR_ABRE_PAR) {
             B();
             if(token.getTipo() == TokensID.TK_SEPARADOR_FECHA_PAR) {
-                /*Token t;
-                Token t;
-                while(token.getTipo() == TokensID.TK_SEPARADOR_FECHA_PAR){
-                    t = pilha.pop();
-                    if(t != null){
-                        token = s.getToken();
-                    }else {
-                        //erro
-                    }
-                }*/
+               
                 if(OP(token.getTipo())) {
                     F();
                 }
             } else {
-                // throw new SyntacticException(SyntacticException.ERRO_EXPRETION_FORMATION, s.getLinha(), s.getColuna());
+                 throw new SyntacticException(SyntacticException.ERRO_EXPRESSION_FORMATION, s.getLinha(), s.getColuna());
             }
         } else {
-            // throw new SyntacticException(SyntacticException.ERRO_EXPRETION_FORMATION, s.getLinha(), s.getColuna());
+             throw new SyntacticException(SyntacticException.ERRO_EXPRESSION_FORMATION, s.getLinha(), s.getColuna());
         }
     }
 }

@@ -12,18 +12,18 @@ class Descricoes {
         descricaoHT.put(LexicalException.ERRO_CHAR, "Caracter mal formado (somente um caracter entre aspas simples).");
         descricaoHT.put(LexicalException.ERRO_ESTADO, "Erro de estado (caracter deve se removido)");
        
-        descricaoHT.put(SyntacticException.ERRO_TYPE_CLASS, "Identificador fora do padrão (letras, underline e digitos).");
-        descricaoHT.put(SyntacticException.ERRO_NAME_CLASS, "Inteiro inválido (somente numerais permitidos).");
-        descricaoHT.put(SyntacticException.ERRO_OPEN_BLOCK, "Float inválido (somente numerais antes e após o ponto).");
-        descricaoHT.put(SyntacticException.ERRO_CLOSE_BLOCK, "Caracter mal formado (somente um caracter entre aspas simples).");
-        descricaoHT.put(SyntacticException.ERRO_DECLARATION,"");
-        descricaoHT.put(SyntacticException.ERRO_CLOSE_DECLARATION,"");
-        descricaoHT.put(SyntacticException.ERRO_ATTRIBUTION,"");
-        descricaoHT.put(SyntacticException.ERRO_CLOSE_COMPARING,"");
-        descricaoHT.put(SyntacticException.ERRO_TYPE_COMPARING,"");
-        descricaoHT.put(SyntacticException.ERRO_CONDICIONAL_CLOSE,"");
-        descricaoHT.put(SyntacticException.ERRO_CONDICIONAL_OPEN,"");
-        descricaoHT.put(SyntacticException.ERRO_COMPARATION_TYPE,"");
+        descricaoHT.put(SyntacticException.ERRO_TYPE_CLASS, "Tipo de retorno da classe deve ser declarado.");
+        descricaoHT.put(SyntacticException.ERRO_NAME_CLASS, "Nome de classe não permitido.");
+        descricaoHT.put(SyntacticException.ERRO_OPEN_BLOCK, "Bloco não foi aberto.");
+        descricaoHT.put(SyntacticException.ERRO_CLOSE_BLOCK, "Bloco não foi fechado.");
+        descricaoHT.put(SyntacticException.ERRO_DECLARATION,"Declaração incompleta.");
+        descricaoHT.put(SyntacticException.ERRO_CLOSE_DECLARATION,"Declaração não finalizada.");
+        descricaoHT.put(SyntacticException.ERRO_ATTRIBUTION,"Atribuição não compativel.");
+        descricaoHT.put(SyntacticException.ERRO_CLOSE_COMPARING,"Comparação não finalizada.");
+        descricaoHT.put(SyntacticException.ERRO_TYPE_COMPARING,"Atribuição invalida para comparação.");
+        descricaoHT.put(SyntacticException.ERRO_CONDICIONAL_CLOSE,"Parâmetro da condicional não fechado.");
+        descricaoHT.put(SyntacticException.ERRO_CONDICIONAL_OPEN,"Abertura necessária para o parâmetro da condicional");
+        descricaoHT.put(SyntacticException.ERRO_EXPRESSION_FORMATION,"Expressão invalida");
     }
 
     Descricoes() {

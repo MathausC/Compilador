@@ -13,7 +13,7 @@ public class SyntacticException extends RuntimeException{
     public final static int ERRO_TYPE_COMPARING = 13;
     public final static int ERRO_CONDICIONAL_CLOSE = 14;
     public final static int ERRO_CONDICIONAL_OPEN = 15;
-    public final static int ERRO_COMPARATION_TYPE = 16;
+    public final static int ERRO_EXPRESSION_FORMATION = 16;
     
     
     
