@@ -16,6 +16,14 @@ class Descricoes {
         descricaoHT.put(SyntacticException.ERRO_NAME_CLASS, "Inteiro inválido (somente numerais permitidos).");
         descricaoHT.put(SyntacticException.ERRO_OPEN_BLOCK, "Float inválido (somente numerais antes e após o ponto).");
         descricaoHT.put(SyntacticException.ERRO_CLOSE_BLOCK, "Caracter mal formado (somente um caracter entre aspas simples).");
+        descricaoHT.put(SyntacticException.ERRO_DECLARATION,"");
+        descricaoHT.put(SyntacticException.ERRO_CLOSE_DECLARATION,"");
+        descricaoHT.put(SyntacticException.ERRO_ATTRIBUTION,"");
+        descricaoHT.put(SyntacticException.ERRO_CLOSE_COMPARING,"");
+        descricaoHT.put(SyntacticException.ERRO_TYPE_COMPARING,"");
+        descricaoHT.put(SyntacticException.ERRO_CONDICIONAL_CLOSE,"");
+        descricaoHT.put(SyntacticException.ERRO_CONDICIONAL_OPEN,"");
+        descricaoHT.put(SyntacticException.ERRO_COMPARATION_TYPE,"");
     }
 
     Descricoes() {
