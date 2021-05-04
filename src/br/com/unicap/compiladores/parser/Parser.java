@@ -101,24 +101,15 @@ public class Parser extends Terminal{
     private void V(){
         token = s.getToken();
         if(token.getTipo() == TokensID.TK_IDENTIFICADOR){
-            token = s.getToken();
-            if(token.getTipo() == TokensID.TK_SEPARADOR_VIRGULA) Vl();
-            else AT();
+            AT();
         }else{throw new SyntacticException(SyntacticException.ERRO_DECLARATION, s.getLinha(), s.getColuna()); }
     }
     
-    private void Vl() {
-        token = s.getToken();
-        if(token.getTipo() == TokensID.TK_IDENTIFICADOR) {
-            token = s.getToken();
-            if(token.getTipo() == TokensID.TK_SEPARADOR_VIRGULA) Vl();
-            else if(token.getTipo() == TokensID.TK_SEPARADOR_PONTO) return;
-            else throw new SyntacticException(SyntacticException.ERRO_DECLARATION, s.getLinha(), s.getColuna());
-        } else throw new SyntacticException(SyntacticException.ERRO_DECLARATION, s.getLinha(), s.getColuna());
-    }
-    
     private void AT(){
-        if(token.getTipo() == TokensID.TK_SEPARADOR_PONTO);
+        token = s.getToken();
+        if(token.getTipo() == TokensID.TK_SEPARADOR_PONTO) {
+            return;
+        }
         else if (token.getTipo() == TokensID.TK_ATRIBUICAO){
             token = s.getToken();
             switch(token.getTipo()) {
