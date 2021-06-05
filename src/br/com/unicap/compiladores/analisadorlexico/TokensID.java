@@ -5,6 +5,7 @@ public enum TokensID {
     TK_ID_INT,
     TK_ID_FLOAT,
     TK_ID_CHAR,
+    TK_ID_BOOL,
     TK_PR_MAIN,
     TK_PR_IF,
     TK_PR_ELSE,

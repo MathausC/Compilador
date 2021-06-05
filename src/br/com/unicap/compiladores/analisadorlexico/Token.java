@@ -18,7 +18,7 @@ public class Token{
         this.tipo = tipo;
     }
 
-    String getTexto() {
+    public String getTexto() {
         return texto;
     }
 

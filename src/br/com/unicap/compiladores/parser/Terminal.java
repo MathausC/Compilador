@@ -1,4 +1,5 @@
 package br.com.unicap.compiladores.parser;
+import br.com.unicap.compiladores.analisadorlexico.Token;
 import br.com.unicap.compiladores.analisadorlexico.TokensID;
 
 public abstract class Terminal {
@@ -33,6 +34,16 @@ public abstract class Terminal {
             case TK_PR_CHAR: return true;
             case TK_PR_BOOL: return true;
             default: return false; 
+        }
+    }
+
+    protected void troca(TokensID t,Token valor) {
+        switch (t) {
+            case TK_PR_INT: valor.setTipo(TokensID.TK_ID_INT); break;
+            case TK_PR_FLOAT: valor.setTipo(TokensID.TK_ID_FLOAT); break;
+            case TK_PR_BOOL: valor.setTipo(TokensID.TK_ID_BOOL); break;
+            case TK_PR_CHAR: valor.setTipo(TokensID.TK_ID_CHAR); break;
+            default: break;
         }
     }
 }

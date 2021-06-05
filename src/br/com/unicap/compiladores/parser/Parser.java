@@ -1,10 +1,12 @@
 package br.com.unicap.compiladores.parser;
 
-
+import br.com.unicap.compiladores.analisadorsemantico.Elemento;
 import br.com.unicap.compiladores.analisadorlexico.ScannerNosso;
 import br.com.unicap.compiladores.analisadorlexico.Token;
 import br.com.unicap.compiladores.analisadorlexico.TokensID;
 import br.com.unicap.compiladores.excecoes.SyntacticException;
+
+import java.util.LinkedList;
 import java.util.Stack;
 
 public class Parser extends Terminal{
@@ -13,10 +15,14 @@ public class Parser extends Terminal{
     private static ScannerNosso s;
     private Stack<Token> parenteses;
     private boolean flagElse;
+    private LinkedList<Elemento<Token>> listaAtributos;
 
     private Parser(ScannerNosso s) {
         Parser.s = s;
         parenteses = new Stack<Token>();
+        if(listaAtributos == null){
+            listaAtributos = new LinkedList<Elemento<Token>>();
+        }
     }
 
     public static Parser getContrutor(ScannerNosso s) {
@@ -89,7 +95,9 @@ public class Parser extends Terminal{
                 token = s.getToken();
             }
             flagElse = false;
-            if(T(token.getTipo())) V();
+            if(T(token.getTipo())) {
+                V(token.getTipo()); 
+            }
             else if(token.getTipo() == TokensID.TK_PR_IF) IF();
             else if(token.getTipo() == TokensID.TK_PR_WHILE) W();
             else if(token.getTipo() == TokensID.TK_PR_DO) D();
@@ -98,9 +106,10 @@ public class Parser extends Terminal{
         }
     }
     
-    private void V(){
+    private void V(TokensID t){
         token = s.getToken();
         if(token.getTipo() == TokensID.TK_IDENTIFICADOR){
+            troca(t, token);
             AT();
         }else{throw new SyntacticException(SyntacticException.ERRO_DECLARATION, s.getLinha(), s.getColuna()); }
     }
