@@ -26,6 +26,12 @@ class Descricoes {
         descricaoHT.put(SyntacticException.ERRO_DECLARATION,"Declaração inválida.");
         descricaoHT.put(SyntacticException.STATIMANT_MISSING,"Estabelcer condicional do faltando.");
         descricaoHT.put(SyntacticException.CONDICIONAL_MISSING,"Condicional não declarada.");
+
+        descricaoHT.put(SemanticException.ERRO_UNDEFINED_VARIABLE, "A variável não foi definida.");
+        descricaoHT.put(SemanticException.ERRO_DEFINED_VARIABLE, "A variável já foi definida");
+        descricaoHT.put(SemanticException.ERRO_2, "a");
+        descricaoHT.put(SemanticException.ERRO_3, "b");
+        descricaoHT.put(SemanticException.ERRO_4, "c");
     }
 
     Descricoes() {
