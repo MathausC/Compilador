@@ -45,7 +45,7 @@ public class Elemento <T> implements Comparable <Elemento<T>>{
     }
 
     public boolean temMesmoNome(Elemento<T> e) {
-	    if(e.tipo.getTexto() == this.tipo.getTexto()) {
+	    if(e.getTipo().getTexto() == this.getTipo().getTexto()) {
             if(e.getNivel() < this.getNivel()) {
                 return true;
             }
@@ -55,23 +55,22 @@ public class Elemento <T> implements Comparable <Elemento<T>>{
 
     @Override
     public int compareTo(Elemento<T> e) {
-        if(this.tipo.getTexto().compareTo(e.getTipo().getTexto()) == 0){
+        if(this.getTipo().getTexto().compareTo(e.getTipo().getTexto()) == 0){
             if(this.nivel > e.getNivel()){
-                //não enxerga
-            }else if(this.escopo == e.getEscopo()){
-
-            }else{
-                if(this.escopo == e.getEscopo()){
-
+                return this.getNivel() - e.getNivel();
+            } else if (this.getNivel() == e.getNivel()) {
+                if(this.getEscopo() == e.getEscopo()){
+                    return 0;
+                } else {
+                    return this.getEscopo() - e.getEscopo(); 
                 }
-            }
-            
+            } else {
+                return 0;
+            }            
         }else{
-
+            return this.getTipo().getTexto().compareTo(e.getTipo().getTexto());
         }
-        
-        return 0;
     }
-
-
 }
+
+
