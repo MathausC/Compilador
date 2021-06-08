@@ -1,7 +1,7 @@
 package br.com.unicap.compiladores.analisadorsemantico;
 import br.com.unicap.compiladores.analisadorlexico.*;
 
-public class Elemento <T> implements Comparable <Elemento<T>>{
+public class Elemento <T> {
     private T valor;
     private Token tipo;
     private int escopo;
@@ -52,23 +52,22 @@ public class Elemento <T> implements Comparable <Elemento<T>>{
         }
         return true;
     }
-
-    @Override
-    public int compareTo(Elemento<T> e) {
+    //this é o novo. E é o elemento da lista
+    public boolean equals(Elemento<T> e) {
         if(this.getTipo().getTexto().compareTo(e.getTipo().getTexto()) == 0){
-            if(this.nivel > e.getNivel()){
-                return this.getNivel() - e.getNivel();
+            if(this.nivel < e.getNivel()){
+                return false;
             } else if (this.getNivel() == e.getNivel()) {
                 if(this.getEscopo() == e.getEscopo()){
-                    return 0;
+                    return true;
                 } else {
-                    return this.getEscopo() - e.getEscopo(); 
+                    return false; 
                 }
             } else {
-                return 0;
+                return true;
             }            
         }else{
-            return this.getTipo().getTexto().compareTo(e.getTipo().getTexto());
+            return false;
         }
     }
 }
