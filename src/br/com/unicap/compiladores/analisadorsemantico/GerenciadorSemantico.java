@@ -1,9 +1,7 @@
 package br.com.unicap.compiladores.analisadorsemantico;
 import br.com.unicap.compiladores.excecoes.SemanticException;
-import br.com.unicap.compiladores.analisadorlexico.ScannerNosso;
 import br.com.unicap.compiladores.parser.Parser;
 
-import java.util.LinkedList;
 import java.util.Stack;
 
 public class GerenciadorSemantico {
