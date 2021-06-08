@@ -1,12 +1,13 @@
 package br.com.unicap.compiladores.parser;
 
 import br.com.unicap.compiladores.analisadorsemantico.Elemento;
+import br.com.unicap.compiladores.analisadorsemantico.GerenciadorSemantico;
 import br.com.unicap.compiladores.analisadorlexico.ScannerNosso;
 import br.com.unicap.compiladores.analisadorlexico.Token;
 import br.com.unicap.compiladores.analisadorlexico.TokensID;
 import br.com.unicap.compiladores.excecoes.SyntacticException;
+import br.com.unicap.compiladores.excecoes.SemanticException;
 
-import java.util.LinkedList;
 import java.util.Stack;
 
 public class Parser extends Terminal{
@@ -15,14 +16,15 @@ public class Parser extends Terminal{
     private static ScannerNosso s;
     private Stack<Token> parenteses;
     private boolean flagElse;
-    private LinkedList<Elemento<Token>> listaAtributos;
-
+    private GerenciadorSemantico gS;
+    private int nivel;
+    private Elemento<String> e;
+    
     private Parser(ScannerNosso s) {
         Parser.s = s;
         parenteses = new Stack<Token>();
-        if(listaAtributos == null){
-            listaAtributos = new LinkedList<Elemento<Token>>();
-        }
+        this.nivel = 0;
+        gS = new GerenciadorSemantico();
     }
 
     public static Parser getContrutor(ScannerNosso s) {
@@ -63,6 +65,9 @@ public class Parser extends Terminal{
             if(token.getTipo() == TokensID.TK_IDENTIFICADOR) {
                 token.setTipo(TokensID.TK_CLASS);
             }
+            e = new Elemento<String>(token.getTexto(), token, nivel);
+            gS.addLista(e);
+            gS.add(nivel);
             abreBloco();
         }
         else {
@@ -71,6 +76,7 @@ public class Parser extends Terminal{
     }
 
     private void abreBloco() {
+        
         token = s.getToken();
         if(token.getTipo() == TokensID.TK_SEPARADOR_ABRE_CHA) {
             bloco();
@@ -82,6 +88,8 @@ public class Parser extends Terminal{
     }
 
     private void fechaBloco() {
+        nivel--;
+        gS.fechaEscopo();        
         if(token.getTipo() != TokensID.TK_SEPARADOR_FECHA_CHA) {
             throw new SyntacticException(SyntacticException.ERRO_CLOSE_BLOCK, s.getLinha(), s.getColuna());
         } else {
@@ -90,6 +98,8 @@ public class Parser extends Terminal{
     }
     
     private void bloco() {
+        nivel++;
+        gS.add(nivel);
         while(true) {
             if(!flagElse){
                 token = s.getToken();
@@ -110,6 +120,8 @@ public class Parser extends Terminal{
         token = s.getToken();
         if(token.getTipo() == TokensID.TK_IDENTIFICADOR){
             troca(t, token);
+            e = new Elemento<String>("none", token, nivel);
+            gS.addLista(e);
             AT();
         }else{throw new SyntacticException(SyntacticException.ERRO_DECLARATION, s.getLinha(), s.getColuna()); }
     }
@@ -122,12 +134,72 @@ public class Parser extends Terminal{
         else if (token.getTipo() == TokensID.TK_ATRIBUICAO){
             token = s.getToken();
             switch(token.getTipo()) {
-                case TK_PR_TRUE: break;
-                case TK_PR_FALSE: break;
-                case TK_CHAR: break;
-                case TK_NUMERO_INT: E(); break;
-                case TK_NUMERO_FLT: E(); break;
-                case TK_IDENTIFICADOR: E(); break;
+                case TK_PR_TRUE: 
+                    if(e.getTipo().getTipo() != TokensID.TK_ID_BOOL) {
+                        throw new SemanticException(SemanticException.ERRO_ATTRIBUTION_INCORRECT, s.getLinha(), s.getColuna());
+                    } else {
+                        e.setValor(token.getTexto());
+                    }
+                    break;
+                case TK_PR_FALSE: 
+                    if(e.getTipo().getTipo() != TokensID.TK_ID_BOOL) {
+                        throw new SemanticException(SemanticException.ERRO_ATTRIBUTION_INCORRECT, s.getLinha(), s.getColuna());
+                    } else {
+                        e.setValor(token.getTexto());
+                    }
+                    break;
+                case TK_CHAR: 
+                    if(e.getTipo().getTipo() != TokensID.TK_ID_CHAR) {
+                        throw new SemanticException(SemanticException.ERRO_ATTRIBUTION_INCORRECT, s.getLinha(), s.getColuna());
+                    } else {
+                        e.setValor(token.getTexto());
+                    }
+                    break;
+                case TK_NUMERO_INT: E();
+                    if(e.getTipo().getTipo() != TokensID.TK_ID_INT) {
+                        throw new SemanticException(SemanticException.ERRO_ATTRIBUTION_INCORRECT, s.getLinha(), s.getColuna());
+                    } else {
+                    e.setValor(token.getTexto());
+                    }
+                    break;
+                case TK_NUMERO_FLT: E();
+                    if(e.getTipo().getTipo() != TokensID.TK_ID_FLOAT || e.getTipo().getTipo() != TokensID.TK_ID_INT) {
+                        throw new SemanticException(SemanticException.ERRO_ATTRIBUTION_INCORRECT, s.getLinha(), s.getColuna());
+                    } else {
+                        e.setValor(token.getTexto());
+                    }
+                    break;
+                case TK_IDENTIFICADOR:
+                    TokensID tem = e.getTipo().getTipo();
+                    e = gS.procurar(new Elemento<String>("", token, nivel));
+                    if(e == null) {
+                        throw new SemanticException(SemanticException.ERRO_ATTRIBUTION_INCORRECT, s.getLinha(), s.getColuna());
+                    } else {
+                        TokensID t = e.getTipo().getTipo();
+                        troca(t, token);
+                        switch(token.getTipo()){
+                            case TK_ID_INT:
+                                if(tem != TokensID.TK_ID_INT && tem != TokensID.TK_ID_FLOAT){
+                                    throw new SemanticException(SemanticException.ERRO_ATTRIBUTION_INCORRECT, s.getLinha(), s.getColuna());
+                                }
+                                break;
+                            case TK_ID_FLOAT:
+                                if(tem != TokensID.TK_ID_FLOAT){
+                                    throw new SemanticException(SemanticException.ERRO_ATTRIBUTION_INCORRECT, s.getLinha(), s.getColuna());
+                                }
+                                break;
+                            case TK_ID_BOOL:
+                                if(tem != TokensID.TK_ID_BOOL){
+                                    throw new SemanticException(SemanticException.ERRO_ATTRIBUTION_INCORRECT, s.getLinha(), s.getColuna());
+                                }
+                                break;
+                            default:
+                                //erro semantico
+                                break;
+                        }
+                    }
+                    E();
+                    break;
                 case TK_SEPARADOR_ABRE_PAR: E(); break;
                 default: throw new SyntacticException(SyntacticException.ERRO_ATTRIBUTION, s.getLinha(), s.getColuna()); 
             }

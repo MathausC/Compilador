@@ -6,10 +6,24 @@ public class Elemento <T> {
     private Token tipo;
     private int escopo;
     private int nivel;
+    private boolean mod;
 
-    public Elemento(T valor, Token tipo){
+    public Elemento(T valor, Token tipo, int nivel){
         this.valor = valor;
         this.tipo = tipo;
+        mod = true;
+        setNivel(nivel);
+    }
+
+    public void modFalse(){
+        mod = false;
+    }
+
+    public void modTrue() {
+        mod = true;
+    }
+    public boolean getMod(){
+        return this.mod;
     }
 
     public T getValor(){
@@ -17,7 +31,7 @@ public class Elemento <T> {
 
     }
 
-    void setValor(T valor) {
+    public void setValor(T valor) {
 	    this.valor = valor;
     }
 
@@ -52,23 +66,10 @@ public class Elemento <T> {
         }
         return true;
     }
-    //this é o novo. E é o elemento da lista
+    
     public boolean equals(Elemento<T> e) {
-        if(this.getTipo().getTexto().compareTo(e.getTipo().getTexto()) == 0){
-            if(this.nivel < e.getNivel()){
-                return false;
-            } else if (this.getNivel() == e.getNivel()) {
-                if(this.getEscopo() == e.getEscopo()){
-                    return true;
-                } else {
-                    return false; 
-                }
-            } else {
-                return true;
-            }            
-        }else{
-            return false;
-        }
+        if(!mod) return mod;
+        return (this.getTipo().getTexto().compareTo(e.getTipo().getTexto()) == 0);
     }
 }
 

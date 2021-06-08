@@ -29,9 +29,7 @@ class Descricoes {
 
         descricaoHT.put(SemanticException.ERRO_UNDEFINED_VARIABLE, "A variável não foi definida.");
         descricaoHT.put(SemanticException.ERRO_DEFINED_VARIABLE, "A variável já foi definida");
-        descricaoHT.put(SemanticException.ERRO_2, "a");
-        descricaoHT.put(SemanticException.ERRO_3, "b");
-        descricaoHT.put(SemanticException.ERRO_4, "c");
+        descricaoHT.put(SemanticException.ERRO_ATTRIBUTION_INCORRECT, "A atribuição está inválida");
     }
 
     Descricoes() {
