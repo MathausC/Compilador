@@ -24,7 +24,7 @@ public class Parser extends Terminal{
         Parser.s = s;
         parenteses = new Stack<Token>();
         this.nivel = 0;
-        gS = new GerenciadorSemantico();
+        gS = new GerenciadorSemantico(this);
     }
 
     public static Parser getContrutor(ScannerNosso s) {
@@ -40,6 +40,12 @@ public class Parser extends Terminal{
 
     public void getParser() {
         inicioClass();
+    }
+    public int getLinha(){
+        return s.getLinha();
+    }
+    public int getColuna(){
+        return s.getColuna();
     }
 
     public void inicioClass() {
@@ -122,6 +128,7 @@ public class Parser extends Terminal{
             troca(t, token);
             e = new Elemento<String>("none", token, nivel);
             gS.addLista(e);
+            System.out.print(gS.lista);
             AT();
         }else{throw new SyntacticException(SyntacticException.ERRO_DECLARATION, s.getLinha(), s.getColuna()); }
     }
@@ -324,7 +331,6 @@ public class Parser extends Terminal{
         }
 
     private void E(){
-        System.out.println(token);
         if(ID(token.getTipo())) {
             A();
             if(!parenteses.isEmpty()){

@@ -4,8 +4,8 @@ public class SemanticException extends RuntimeException{
     public final static int ERRO_UNDEFINED_VARIABLE= 19;
     public final static int ERRO_DEFINED_VARIABLE = 20;
     public final static int ERRO_ATTRIBUTION_INCORRECT= 21;
-    public final static int ERRO_3 = 22;
-    public final static int ERRO_4 = 23;
+    
+    
 
     private Descricoes d = new Descricoes();
     private String ms;

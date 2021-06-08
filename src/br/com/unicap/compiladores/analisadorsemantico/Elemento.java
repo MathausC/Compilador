@@ -1,7 +1,7 @@
 package br.com.unicap.compiladores.analisadorsemantico;
 import br.com.unicap.compiladores.analisadorlexico.*;
 
-public class Elemento <T> {
+public class Elemento <T> extends Object{
     private T valor;
     private Token tipo;
     private int escopo;
@@ -68,6 +68,7 @@ public class Elemento <T> {
     }
     
     public boolean equals(Elemento<T> e) {
+        System.out.println(mod);
         if(!mod) return mod;
         return (this.getTipo().getTexto().compareTo(e.getTipo().getTexto()) == 0);
     }
