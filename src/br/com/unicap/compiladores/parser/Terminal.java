@@ -5,7 +5,13 @@ import br.com.unicap.compiladores.analisadorlexico.TokensID;
 public abstract class Terminal {
   
     protected boolean ID(TokensID t){
-        return (t == TokensID.TK_IDENTIFICADOR || t == TokensID.TK_NUMERO_INT || t == TokensID.TK_NUMERO_FLT );        
+        return (t == TokensID.TK_ID_INT || t == TokensID.TK_NUMERO_INT || t == TokensID.TK_NUMERO_FLT || t == TokensID.TK_ID_FLOAT );        
+    }
+    protected boolean isInt(TokensID t){
+        return (t == TokensID.TK_ID_INT || t == TokensID.TK_NUMERO_INT);
+    }
+    protected boolean isFloat(TokensID t){
+        return (t == TokensID.TK_ID_FLOAT || t == TokensID.TK_NUMERO_FLT);
     }
     protected boolean OP(TokensID t){
         switch(t){
@@ -43,6 +49,14 @@ public abstract class Terminal {
             case TK_PR_FLOAT: valor.setTipo(TokensID.TK_ID_FLOAT); break;
             case TK_PR_BOOL: valor.setTipo(TokensID.TK_ID_BOOL); break;
             case TK_PR_CHAR: valor.setTipo(TokensID.TK_ID_CHAR); break;
+            default: break;
+        }
+    }
+
+    protected void trocaInt(Token valor) {
+        switch (valor.getTipo()) {
+            case TK_ID_INT: valor.setTipo(TokensID.TK_ID_FLOAT); break;
+            case TK_NUMERO_INT: valor.setTipo(TokensID.TK_NUMERO_FLT); break;
             default: break;
         }
     }

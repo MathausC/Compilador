@@ -162,15 +162,23 @@ public class Parser extends Terminal{
                         e.setValor(token.getTexto());
                     }
                     break;
-                case TK_NUMERO_INT: E();
-                    if(e.getTipo().getTipo() != TokensID.TK_ID_INT) {
+                case TK_NUMERO_INT:
+                    if(e.getTipo().getTipo() != TokensID.TK_ID_FLOAT && e.getTipo().getTipo() != TokensID.TK_ID_INT) {
                         throw new SemanticException(SemanticException.ERRO_ATTRIBUTION_INCORRECT, s.getLinha(), s.getColuna());
                     } else {
-                    e.setValor(token.getTexto());
+                        boolean flag;
+                        if(e.getTipo().getTipo() == TokensID.TK_ID_FLOAT){
+                            token.setTipo(TokensID.TK_NUMERO_FLT);
+                            flag = true;
+                        } else {
+                            flag = false;
+                        }
+                        e.setValor(token.getTexto());
+                        E(flag);
                     }
                     break;
-                case TK_NUMERO_FLT: E();
-                    if(e.getTipo().getTipo() != TokensID.TK_ID_FLOAT || e.getTipo().getTipo() != TokensID.TK_ID_INT) {
+                case TK_NUMERO_FLT: E(true);
+                    if(e.getTipo().getTipo() != TokensID.TK_ID_INT) {
                         throw new SemanticException(SemanticException.ERRO_ATTRIBUTION_INCORRECT, s.getLinha(), s.getColuna());
                     } else {
                         e.setValor(token.getTexto());
@@ -188,11 +196,16 @@ public class Parser extends Terminal{
                             case TK_ID_INT:
                                 if(tem != TokensID.TK_ID_INT && tem != TokensID.TK_ID_FLOAT){
                                     throw new SemanticException(SemanticException.ERRO_ATTRIBUTION_INCORRECT, s.getLinha(), s.getColuna());
+                                } else {
+                                    if(tem == TokensID.TK_ID_FLOAT)
+                                    E(true);
                                 }
                                 break;
                             case TK_ID_FLOAT:
                                 if(tem != TokensID.TK_ID_FLOAT){
                                     throw new SemanticException(SemanticException.ERRO_ATTRIBUTION_INCORRECT, s.getLinha(), s.getColuna());
+                                } else {
+                                    E(true);
                                 }
                                 break;
                             case TK_ID_BOOL:
@@ -205,9 +218,14 @@ public class Parser extends Terminal{
                                 break;
                         }
                     }
-                    E();
                     break;
-                case TK_SEPARADOR_ABRE_PAR: E(); break;
+                case TK_SEPARADOR_ABRE_PAR:
+                    if(isFloat(e.getTipo().getTipo())){
+                        E(true); 
+                    } else {
+                        E(false);
+                    }
+                    break;
                 default: throw new SyntacticException(SyntacticException.ERRO_ATTRIBUTION, s.getLinha(), s.getColuna()); 
             }
             if(token.getTipo() == TokensID.TK_SEPARADOR_PONTO);
@@ -238,7 +256,7 @@ public class Parser extends Terminal{
                 throw new SyntacticException(SyntacticException.STATIMANT_MISSING, s.getLinha(), s.getColuna());
             }
         } else {
-            flagElse= true;
+            flagElse = true;
             return;
         }
     }
@@ -269,10 +287,10 @@ public class Parser extends Terminal{
     }
 
     private void N() {
-        E();
+        E(true);
         if(OR(token.getTipo())) {
             token = s.getToken();
-            E();
+            E(true);
             if(token.getTipo() == TokensID.TK_SEPARADOR_FECHA_PAR) { 
                 abreBloco();
             } else {
@@ -304,10 +322,10 @@ public class Parser extends Terminal{
                         }
                     }
                     else {
-                        E();
+                        E(true);
                         if(OR(token.getTipo())) {
                             token = s.getToken();
-                            E();
+                            E(true);
                             if(token.getTipo() == TokensID.TK_SEPARADOR_FECHA_PAR) {
                                 token = s.getToken();
                                 if(token.getTipo() == TokensID.TK_SEPARADOR_PONTO) {
@@ -330,50 +348,66 @@ public class Parser extends Terminal{
             }
         }
 
-    private void E(){
+    private void E(boolean flagFloat){
+        System.out.println(token.getTexto() + " " + token.getTipo());
         if(ID(token.getTipo())) {
-            A();
+            if(!flagFloat){
+                //Erro atribuição de float a um inteiro;
+            } else {
+                trocaInt(token);
+            }
+            A(flagFloat);
             if(!parenteses.isEmpty()){
                 throw new SyntacticException(SyntacticException.ERRO_EXPRESSION_FORMATION, s.getLinha(), s.getColuna());
             }
         }else if (token.getTipo() == TokensID.TK_SEPARADOR_ABRE_PAR) {
             parenteses.push(token);
-            B();
+            B(flagFloat);
         }
         else {
             throw new SyntacticException(SyntacticException.ERRO_EXPRESSION_FORMATION, s.getLinha(), s.getColuna());
         }
     }
 //  a+(b+b)+a)
-    private void A() {
+    private void A(boolean flagFloat) {
         token = s.getToken();
         if(OP(token.getTipo())) {
-            F();
+            F(flagFloat);
         } else {
             return;
         }
     }
     // E -> 1 A -> ) F ->
-    private void F() {
+    private void F(boolean flagFloat) {
         token = s.getToken();
         if(ID(token.getTipo())) {
-            A();
+            if(!flagFloat){
+                //Erro atribuição de float a um inteiro;
+            } else {
+                trocaInt(token);
+            }
+            A(flagFloat);
         }else if(token.getTipo() == TokensID.TK_SEPARADOR_ABRE_PAR) {
             parenteses.push(token);
-            B();
+            B(flagFloat);
         } else {
             throw new SyntacticException(SyntacticException.ERRO_EXPRESSION_FORMATION, s.getLinha(), s.getColuna());
         }
     }
 
-    private void Fl() {
+    private void Fl(boolean flagFloat) {
         if(OP(token.getTipo())) {
             token = s.getToken();
             if(ID(token.getTipo())) {
-                Al();
+                if(!flagFloat){
+                    //Erro atribuição de float a um inteiro;
+                } else {
+                    trocaInt(token);
+                }
+                Al(flagFloat);
             }else if(token.getTipo() == TokensID.TK_SEPARADOR_ABRE_PAR) {
                 parenteses.push(token);
-                B();
+                B(flagFloat);
             } else {
                 throw new SyntacticException(SyntacticException.ERRO_EXPRESSION_FORMATION, s.getLinha(), s.getColuna());
             }
@@ -382,10 +416,10 @@ public class Parser extends Terminal{
         }
     }
 
-    private void Al() {
+    private void Al(boolean flagFloat) {
         token = s.getToken();
         if(OP(token.getTipo())) {
-            Fl();
+            Fl(flagFloat);
         } else if (token.getTipo() == TokensID.TK_SEPARADOR_FECHA_PAR){
             do {
                 if(parenteses.isEmpty()) {
@@ -396,7 +430,7 @@ public class Parser extends Terminal{
                 token = s.getToken();
             }while(token.getTipo() == TokensID.TK_SEPARADOR_FECHA_PAR);
             if(OP(token.getTipo())) {
-                F();
+                F(flagFloat);
             } else {
                 return;
             }
@@ -405,13 +439,18 @@ public class Parser extends Terminal{
         }
     }
 
-    private void B() {
+    private void B(boolean flagFloat) {
         token = s.getToken();
         if(ID(token.getTipo())) {
-            Al();
+            if(!flagFloat){
+                //Erro atribuição de float a um inteiro;
+            } else {
+                trocaInt(token);
+            }
+            Al(flagFloat);
         }else if(token.getTipo() == TokensID.TK_SEPARADOR_ABRE_PAR) {
             parenteses.push(token);
-            B();
+            B(flagFloat);
         } else {
              throw new SyntacticException(SyntacticException.ERRO_EXPRESSION_FORMATION, s.getLinha(), s.getColuna());
         }

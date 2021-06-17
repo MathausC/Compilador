@@ -1,9 +1,3 @@
-int main{
-    int i;
-    while (true) {
-        int i;
-    }
-    while (true) {
-        int i;
-    }
+int main {
+    float i = 1;
 }
