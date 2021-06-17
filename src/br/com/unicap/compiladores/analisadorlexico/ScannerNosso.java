@@ -235,7 +235,6 @@ public class ScannerNosso extends Scan{
     private void ignoreLine() {
         char aux = getCharAtual();
         while(aux != '\n') {
-            System.out.print(aux);
             aux = getCharAtual();
         }
     }

@@ -68,7 +68,6 @@ public class Elemento <T> extends Object{
     }
     
     public boolean equals(Elemento<T> e) {
-        System.out.println(mod);
         if(!mod) return mod;
         return (this.getTipo().getTexto().compareTo(e.getTipo().getTexto()) == 0);
     }

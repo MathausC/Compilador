@@ -29,7 +29,6 @@ public class GerenciadorSemantico {
         }
     }
     public void addLista(Elemento<String> e){
-        System.out.println(lista.contains(e));
         if(!lista.contains(e)) {
             lista.add(e);
         } else {

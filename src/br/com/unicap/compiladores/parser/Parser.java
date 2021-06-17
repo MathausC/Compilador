@@ -128,7 +128,6 @@ public class Parser extends Terminal{
             troca(t, token);
             e = new Elemento<String>("none", token, nivel);
             gS.addLista(e);
-            System.out.print(gS.lista);
             AT();
         }else{throw new SyntacticException(SyntacticException.ERRO_DECLARATION, s.getLinha(), s.getColuna()); }
     }
@@ -146,6 +145,7 @@ public class Parser extends Terminal{
                         throw new SemanticException(SemanticException.ERRO_ATTRIBUTION_INCORRECT, s.getLinha(), s.getColuna());
                     } else {
                         e.setValor(token.getTexto());
+                        token = s.getToken();
                     }
                     break;
                 case TK_PR_FALSE: 
@@ -153,6 +153,7 @@ public class Parser extends Terminal{
                         throw new SemanticException(SemanticException.ERRO_ATTRIBUTION_INCORRECT, s.getLinha(), s.getColuna());
                     } else {
                         e.setValor(token.getTexto());
+                        token = s.getToken();
                     }
                     break;
                 case TK_CHAR: 
@@ -160,6 +161,7 @@ public class Parser extends Terminal{
                         throw new SemanticException(SemanticException.ERRO_ATTRIBUTION_INCORRECT, s.getLinha(), s.getColuna());
                     } else {
                         e.setValor(token.getTexto());
+                        token = s.getToken();
                     }
                     break;
                 case TK_NUMERO_INT:
@@ -212,6 +214,7 @@ public class Parser extends Terminal{
                                 if(tem != TokensID.TK_ID_BOOL){
                                     throw new SemanticException(SemanticException.ERRO_ATTRIBUTION_INCORRECT, s.getLinha(), s.getColuna());
                                 }
+                                token = s.getToken();
                                 break;
                             default:
                                 //erro semantico
@@ -349,7 +352,6 @@ public class Parser extends Terminal{
         }
 
     private void E(boolean flagFloat){
-        System.out.println(token.getTexto() + " " + token.getTipo());
         if(ID(token.getTipo())) {
             if(!flagFloat){
                 //Erro atribuição de float a um inteiro;
