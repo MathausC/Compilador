@@ -1,5 +1,6 @@
 package br.com.unicap.compiladores.analisadorsemantico;
 import br.com.unicap.compiladores.analisadorlexico.*;
+import br.com.unicap.compiladores.parser.*;
 
 public class Elemento <T> extends Object{
     private T valor;
@@ -7,6 +8,7 @@ public class Elemento <T> extends Object{
     private int escopo;
     private int nivel;
     private boolean mod;
+    private Terminal t;
 
     public Elemento(T valor, Token tipo, int nivel){
         this.valor = valor;
@@ -69,6 +71,9 @@ public class Elemento <T> extends Object{
     
     public boolean equals(Elemento<T> e) {
         if(!mod) return mod;
+        if(t.isRepetitive(this.getTipo())) {
+            return false;
+        }
         return (this.getTipo().getTexto().compareTo(e.getTipo().getTexto()) == 0);
     }
 }

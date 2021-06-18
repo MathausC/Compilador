@@ -60,4 +60,16 @@ public abstract class Terminal {
             default: break;
         }
     }
+
+    public boolean isRepetitive(Token valor) {
+        switch (valor.getTipo()) {
+            case TK_NUMERO_INT: return true;
+            case TK_NUMERO_FLT: return true;
+            case TK_PR_FALSE: return true;
+            case TK_PR_TRUE: return true;
+            case TK_CHAR: return true;
+            default:
+                return T(valor.getTipo());
+        }
+    }
 }

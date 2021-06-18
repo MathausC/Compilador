@@ -5,7 +5,7 @@ import br.com.unicap.compiladores.parser.Parser;
 import java.util.Stack;
 
 public class GerenciadorSemantico {
-    public Lista lista;
+    private Lista lista;
     private Stack<Integer> pilha;
     private Parser p;
     
@@ -56,4 +56,7 @@ public class GerenciadorSemantico {
             lista.set(index, e);
         }
     }    
+    public Lista getLista(){
+        return this.lista;
+    }
 }

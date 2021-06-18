@@ -1,7 +1,7 @@
 package br.com.unicap.compiladores.main;
 
 
-import br.com.unicap.compiladores.analisadorlexico.*;
+import br.com.unicap.compiladores.analisadorlexico.ScannerNosso;
 import br.com.unicap.compiladores.excecoes.LexicalException;
 import br.com.unicap.compiladores.excecoes.SyntacticException;
 import br.com.unicap.compiladores.parser.Parser;

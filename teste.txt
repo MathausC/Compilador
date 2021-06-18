@@ -1,4 +1,26 @@
 int main {
-    float i = 1;
-    bool j = true;
+    if(1 == 1){
+
+    }
+}
+START main:
+mov r0, 1
+mov r1, 2
+BNQ r0, r1, L1
+
+J L3
+L1:
+
+BNE r0, L2
+
+J L3
+L2:
+
+
+L3:
+END
+
+add(a, b, c){
+    return "ADD" + a + ", " + b + ", " + c + "\n";
+     
 }

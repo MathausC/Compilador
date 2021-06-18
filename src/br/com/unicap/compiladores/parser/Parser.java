@@ -7,6 +7,7 @@ import br.com.unicap.compiladores.analisadorlexico.Token;
 import br.com.unicap.compiladores.analisadorlexico.TokensID;
 import br.com.unicap.compiladores.excecoes.SyntacticException;
 import br.com.unicap.compiladores.excecoes.SemanticException;
+import br.com.unicap.compiladores.codigo.GeradorCodigo;
 
 import java.util.Stack;
 
@@ -19,12 +20,14 @@ public class Parser extends Terminal{
     private GerenciadorSemantico gS;
     private int nivel;
     private Elemento<String> e;
+    private GeradorCodigo gc;
     
     private Parser(ScannerNosso s) {
         Parser.s = s;
         parenteses = new Stack<Token>();
         this.nivel = 0;
         gS = new GerenciadorSemantico(this);
+        gc = GeradorCodigo.getConstrutor(this);
     }
 
     public static Parser getContrutor(ScannerNosso s) {
@@ -36,6 +39,10 @@ public class Parser extends Terminal{
             }
         }
         return p;
+    }
+
+    public GerenciadorSemantico getGerenciadorSemantico(){
+        return gS;
     }
 
     public void getParser() {
@@ -353,9 +360,9 @@ public class Parser extends Terminal{
 
     private void E(boolean flagFloat){
         if(ID(token.getTipo())) {
-            if(!flagFloat){
+            if(isFloat(token.getTipo()) && !flagFloat){
                 //Erro atribuição de float a um inteiro;
-            } else {
+            } else if(flagFloat){
                 trocaInt(token);
             }
             A(flagFloat);
@@ -383,9 +390,9 @@ public class Parser extends Terminal{
     private void F(boolean flagFloat) {
         token = s.getToken();
         if(ID(token.getTipo())) {
-            if(!flagFloat){
+            if(isFloat(token.getTipo()) && !flagFloat){
                 //Erro atribuição de float a um inteiro;
-            } else {
+            } else if(flagFloat){
                 trocaInt(token);
             }
             A(flagFloat);
@@ -401,9 +408,9 @@ public class Parser extends Terminal{
         if(OP(token.getTipo())) {
             token = s.getToken();
             if(ID(token.getTipo())) {
-                if(!flagFloat){
+                if(isFloat(token.getTipo()) && !flagFloat){
                     //Erro atribuição de float a um inteiro;
-                } else {
+                } else if(flagFloat){
                     trocaInt(token);
                 }
                 Al(flagFloat);
@@ -444,9 +451,9 @@ public class Parser extends Terminal{
     private void B(boolean flagFloat) {
         token = s.getToken();
         if(ID(token.getTipo())) {
-            if(!flagFloat){
+            if(isFloat(token.getTipo()) && !flagFloat){
                 //Erro atribuição de float a um inteiro;
-            } else {
+            } else if(flagFloat){
                 trocaInt(token);
             }
             Al(flagFloat);
