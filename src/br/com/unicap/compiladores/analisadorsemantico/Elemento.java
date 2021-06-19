@@ -1,14 +1,15 @@
 package br.com.unicap.compiladores.analisadorsemantico;
 import br.com.unicap.compiladores.analisadorlexico.*;
 import br.com.unicap.compiladores.parser.*;
+import br.com.unicap.compiladores.parser.Terminal;
 
-public class Elemento <T> extends Object{
+public class Elemento <T> extends Terminal{
     private T valor;
     private Token tipo;
     private int escopo;
     private int nivel;
     private boolean mod;
-    private Terminal t;
+    private String registrador;
 
     public Elemento(T valor, Token tipo, int nivel){
         this.valor = valor;
@@ -71,10 +72,18 @@ public class Elemento <T> extends Object{
     
     public boolean equals(Elemento<T> e) {
         if(!mod) return mod;
-        if(t.isRepetitive(this.getTipo())) {
+        if(isRepetitive(e.getTipo())) {
             return false;
         }
         return (this.getTipo().getTexto().compareTo(e.getTipo().getTexto()) == 0);
+    }
+
+    public void setRegistrador(String registrador) {
+        this.registrador = registrador;
+    }
+
+    public String getRegistrador() {
+        return registrador;
     }
 }
 

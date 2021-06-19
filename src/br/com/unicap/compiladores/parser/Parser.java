@@ -8,29 +8,41 @@ import br.com.unicap.compiladores.analisadorlexico.TokensID;
 import br.com.unicap.compiladores.excecoes.SyntacticException;
 import br.com.unicap.compiladores.excecoes.SemanticException;
 import br.com.unicap.compiladores.codigo.GeradorCodigo;
+import br.com.unicap.compiladores.codigo.ClusterDeOperacoes;
 
 import java.util.Stack;
+import java.io.IOException;
 
 public class Parser extends Terminal{
-    private Token token;
+    private static Token token;
     private static Parser p;
     private static ScannerNosso s;
     private Stack<Token> parenteses;
+    private Stack<ClusterDeOperacoes> clusters;
     private boolean flagElse;
     private GerenciadorSemantico gS;
     private int nivel;
-    private Elemento<String> e;
-    private GeradorCodigo gc;
+    private static Elemento<String> e;
+    private static Elemento<String> eG;
+    private static  GeradorCodigo gc;
+    private ClusterDeOperacoes cluster;
+    private int cont = 0;
     
-    private Parser(ScannerNosso s) {
+    private Parser(ScannerNosso s) throws IOException {
         Parser.s = s;
         parenteses = new Stack<Token>();
+        clusters = new Stack<ClusterDeOperacoes>();
         this.nivel = 0;
         gS = new GerenciadorSemantico(this);
         gc = GeradorCodigo.getConstrutor(this);
+        cluster = new ClusterDeOperacoes();
     }
 
-    public static Parser getContrutor(ScannerNosso s) {
+    public static ScannerNosso getS() {
+        return s;
+    }
+
+    public static Parser getContrutor(ScannerNosso s) throws IOException{
         if (p == null) {
             p = new Parser(s);
         } else {
@@ -45,8 +57,9 @@ public class Parser extends Terminal{
         return gS;
     }
 
-    public void getParser() {
+    public void getParser() throws IOException{
         inicioClass();
+        gc.close();
     }
     public int getLinha(){
         return s.getLinha();
@@ -55,7 +68,7 @@ public class Parser extends Terminal{
         return s.getColuna();
     }
 
-    public void inicioClass() {
+    public void inicioClass() throws IOException{
         token = s.getToken();
         if(T(token.getTipo())) {
             nomeClasse();
@@ -72,15 +85,18 @@ public class Parser extends Terminal{
         }
     }
 
-    private void nomeClasse(){
+    private void nomeClasse() throws IOException{
         token = s.getToken();
         if(token.getTipo() == TokensID.TK_PR_MAIN || token.getTipo() == TokensID.TK_IDENTIFICADOR){
             if(token.getTipo() == TokensID.TK_IDENTIFICADOR) {
                 token.setTipo(TokensID.TK_CLASS);
             }
             e = new Elemento<String>(token.getTexto(), token, nivel);
+            cluster.setDestino(e);
+            cluster.setOperacao("START");
             gS.addLista(e);
             gS.add(nivel);
+            gc.start(cluster);
             abreBloco();
         }
         else {
@@ -88,8 +104,7 @@ public class Parser extends Terminal{
         }
     }
 
-    private void abreBloco() {
-        
+    private void abreBloco() throws IOException {        
         token = s.getToken();
         if(token.getTipo() == TokensID.TK_SEPARADOR_ABRE_CHA) {
             bloco();
@@ -110,12 +125,15 @@ public class Parser extends Terminal{
         }
     }
     
-    private void bloco() {
+    private void bloco() throws IOException{
         nivel++;
         gS.add(nivel);
         while(true) {
             if(!flagElse){
                 token = s.getToken();
+                if(token.getTipo() == TokensID.TK_SEPARADOR_PONTO){
+                    token = s.getToken();
+                }
             }
             flagElse = false;
             if(T(token.getTipo())) {
@@ -129,29 +147,42 @@ public class Parser extends Terminal{
         }
     }
     
-    private void V(TokensID t){
+    private void V(TokensID t) throws IOException {
         token = s.getToken();
         if(token.getTipo() == TokensID.TK_IDENTIFICADOR){
             troca(t, token);
-            e = new Elemento<String>("none", token, nivel);
+            e = new Elemento<String>("zero", token, nivel);
             gS.addLista(e);
             AT();
         }else{throw new SyntacticException(SyntacticException.ERRO_DECLARATION, s.getLinha(), s.getColuna()); }
     }
     
-    private void AT(){
+    private void AT() throws IOException{
+        if(token.getTipo() ==TokensID.TK_IDENTIFICADOR) {
+            e = gS.procurar(new Elemento<String>("valor", token, nivel));
+            if(e == null) {
+                throw new SemanticException(SemanticException.ERRO_UNDEFINED_VARIABLE, s.getLinha(), s.getColuna());
+            } else {
+                token = e.getTipo();
+            }
+        }
+        cluster.setDestino(e);
         token = s.getToken();
         if(token.getTipo() == TokensID.TK_SEPARADOR_PONTO) {
+            cluster.setOperacao(token.getTexto());
+            gc.escreveFunção(cluster);
             return;
         }
         else if (token.getTipo() == TokensID.TK_ATRIBUICAO){
+            cluster.setOperacao(token.getTexto());
             token = s.getToken();
             switch(token.getTipo()) {
-                case TK_PR_TRUE: 
+                case TK_PR_TRUE:
                     if(e.getTipo().getTipo() != TokensID.TK_ID_BOOL) {
                         throw new SemanticException(SemanticException.ERRO_ATTRIBUTION_INCORRECT, s.getLinha(), s.getColuna());
                     } else {
-                        e.setValor(token.getTexto());
+                        e.setValor("1");
+                        gc.escreveFunção(cluster);
                         token = s.getToken();
                     }
                     break;
@@ -159,7 +190,8 @@ public class Parser extends Terminal{
                     if(e.getTipo().getTipo() != TokensID.TK_ID_BOOL) {
                         throw new SemanticException(SemanticException.ERRO_ATTRIBUTION_INCORRECT, s.getLinha(), s.getColuna());
                     } else {
-                        e.setValor(token.getTexto());
+                        e.setValor("zero");
+                        gc.escreveFunção(cluster);
                         token = s.getToken();
                     }
                     break;
@@ -167,7 +199,8 @@ public class Parser extends Terminal{
                     if(e.getTipo().getTipo() != TokensID.TK_ID_CHAR) {
                         throw new SemanticException(SemanticException.ERRO_ATTRIBUTION_INCORRECT, s.getLinha(), s.getColuna());
                     } else {
-                        e.setValor(token.getTexto());
+                        e.setValor("" + (Character.getNumericValue((token.getTexto().charAt(1)))+87));
+                        gc.escreveFunção(cluster);
                         token = s.getToken();
                     }
                     break;
@@ -182,32 +215,42 @@ public class Parser extends Terminal{
                         } else {
                             flag = false;
                         }
-                        e.setValor(token.getTexto());
+                        e.setValor("zero");
+                        gc.escreveFunção(cluster);
                         E(flag);
                     }
                     break;
                 case TK_NUMERO_FLT: E(true);
-                    if(e.getTipo().getTipo() != TokensID.TK_ID_INT) {
+                    if(e.getTipo().getTipo() != TokensID.TK_ID_FLOAT) {
                         throw new SemanticException(SemanticException.ERRO_ATTRIBUTION_INCORRECT, s.getLinha(), s.getColuna());
                     } else {
-                        e.setValor(token.getTexto());
+                        e.setValor("zero");
+                        gc.escreveFunção(cluster);
+                        E(true);
                     }
                     break;
                 case TK_IDENTIFICADOR:
                     TokensID tem = e.getTipo().getTipo();
-                    e = gS.procurar(new Elemento<String>("", token, nivel));
-                    if(e == null) {
+                    eG = gS.procurar(new Elemento<String>("", token, nivel));
+                    if(eG == null){
+                        throw new SemanticException(SemanticException.ERRO_UNDEFINED_VARIABLE, s.getLinha(), s.getColuna());
+                    }
+                    token = eG.getTipo();
+                    if(eG == null) {
                         throw new SemanticException(SemanticException.ERRO_ATTRIBUTION_INCORRECT, s.getLinha(), s.getColuna());
-                    } else {
-                        TokensID t = e.getTipo().getTipo();
-                        troca(t, token);
+                    } else {                       
                         switch(token.getTipo()){
                             case TK_ID_INT:
                                 if(tem != TokensID.TK_ID_INT && tem != TokensID.TK_ID_FLOAT){
                                     throw new SemanticException(SemanticException.ERRO_ATTRIBUTION_INCORRECT, s.getLinha(), s.getColuna());
                                 } else {
-                                    if(tem == TokensID.TK_ID_FLOAT)
-                                    E(true);
+                                    e.setValor("zero");
+                                    gc.escreveFunção(cluster);
+                                    if(tem == TokensID.TK_ID_FLOAT) {
+                                        E(true);
+                                    } else {
+                                        E(false);
+                                    }
                                 }
                                 break;
                             case TK_ID_FLOAT:
@@ -224,8 +267,8 @@ public class Parser extends Terminal{
                                 token = s.getToken();
                                 break;
                             default:
-                                //erro semantico
-                                break;
+                                    throw new SemanticException(SemanticException.ERRO_ATTRIBUTION_INCORRECT, s.getLinha(), s.getColuna());
+                                
                         }
                     }
                     break;
@@ -243,17 +286,18 @@ public class Parser extends Terminal{
         }else { throw new SyntacticException(SyntacticException.ERRO_ATTRIBUTION, s.getLinha(), s.getColuna());}
     }
         
-    private void IF(){
+    private void IF() throws IOException {
         token = s.getToken();
         if(token.getTipo() == TokensID.TK_SEPARADOR_ABRE_PAR) {
             C();
+            gc.escreveLabel();
             El();
         } else {
             throw new SyntacticException(SyntacticException.STATIMANT_MISSING, s.getLinha(), s.getColuna());
         }
     }
 
-    private void El() {
+    private void El() throws IOException { 
         token = s.getToken();
         if(token.getTipo() == TokensID.TK_PR_ELSE) {
             token = s.getToken();
@@ -271,7 +315,7 @@ public class Parser extends Terminal{
         }
     }
 
-    private void W() {
+    private void W() throws IOException{
         token = s.getToken();
         if(token.getTipo() == TokensID.TK_SEPARADOR_ABRE_PAR) {
             C();
@@ -280,9 +324,23 @@ public class Parser extends Terminal{
         }
     }
     
-    private void C(){
+    private void C() throws IOException {
         token = s.getToken();
+        if(token.getTipo() ==TokensID.TK_IDENTIFICADOR) {
+            eG = gS.procurar(new Elemento<String>("valor", token, nivel));
+            if(eG == null) {
+                throw new SemanticException(SemanticException.ERRO_UNDEFINED_VARIABLE, s.getLinha(), s.getColuna());
+            } else {
+                token = eG.getTipo();
+            }
+        }
         if(token.getTipo() == TokensID.TK_PR_TRUE || token.getTipo() == TokensID.TK_PR_FALSE) {
+            Elemento<String> temp = new Elemento<String>("0", token, nivel);
+            temp.setRegistrador("zero");
+            cluster.setOperacao(token.getTexto());
+            cluster.setDestino(temp);
+            cluster.setOperando1(temp);
+            gc.escreveFunção(cluster);
             token = s.getToken();
             if(token.getTipo() == TokensID.TK_SEPARADOR_FECHA_PAR) {
                 abreBloco();
@@ -290,13 +348,15 @@ public class Parser extends Terminal{
                 throw new SyntacticException(SyntacticException.ERRO_CONDICIONAL_CLOSE, s.getLinha(), s.getColuna());
             }
         }
-        else if(token.getTipo() == TokensID.TK_SEPARADOR_ABRE_PAR || ID(token.getTipo()) )N();
+        else if(token.getTipo() == TokensID.TK_SEPARADOR_ABRE_PAR || ID(token.getTipo()) ) {
+            N();
+        }
         else {
             throw new SyntacticException(SyntacticException.CONDICIONAL_MISSING, s.getLinha(), s.getColuna());
         }
     }
 
-    private void N() {
+    private void N() throws IOException {
         E(true);
         if(OR(token.getTipo())) {
             token = s.getToken();
@@ -311,7 +371,7 @@ public class Parser extends Terminal{
         }
     }
  
-        private void D(){
+        private void D() throws IOException {
             abreBloco();
             token = s.getToken();
             if(token.getTipo() == TokensID.TK_PR_WHILE) {
@@ -358,13 +418,23 @@ public class Parser extends Terminal{
             }
         }
 
-    private void E(boolean flagFloat){
+    private void E(boolean flagFloat) throws IOException {
+        if(token.getTipo() == TokensID.TK_IDENTIFICADOR || token.getTipo() == TokensID.TK_ID_FLOAT || token.getTipo() == TokensID.TK_ID_INT) {
+            eG = gS.procurar(new Elemento<String>("valor", token, nivel));
+            if(eG == null) {
+                throw new SemanticException(SemanticException.ERRO_UNDEFINED_VARIABLE, s.getLinha(), s.getColuna());
+            }
+        } else {
+            eG = new Elemento<String>(token.getTexto(), token, nivel);
+            eG.setRegistrador(token.getTexto());
+        }
         if(ID(token.getTipo())) {
             if(isFloat(token.getTipo()) && !flagFloat){
-                //Erro atribuição de float a um inteiro;
+                throw new SemanticException(SemanticException.ERRO_ATTRIBUTION_INCORRECT, s.getLinha(), s.getColuna());
             } else if(flagFloat){
                 trocaInt(token);
             }
+            cluster.setOperando1(eG);
             A(flagFloat);
             if(!parenteses.isEmpty()){
                 throw new SyntacticException(SyntacticException.ERRO_EXPRESSION_FORMATION, s.getLinha(), s.getColuna());
@@ -378,41 +448,73 @@ public class Parser extends Terminal{
         }
     }
 //  a+(b+b)+a)
-    private void A(boolean flagFloat) {
+    private void A(boolean flagFloat) throws IOException {
         token = s.getToken();
         if(OP(token.getTipo())) {
+            cluster.setOperacao(token.getTexto());
             F(flagFloat);
         } else {
             return;
         }
     }
     // E -> 1 A -> ) F ->
-    private void F(boolean flagFloat) {
+    private void F(boolean flagFloat) throws IOException {
         token = s.getToken();
+        if(token.getTipo() == TokensID.TK_IDENTIFICADOR || token.getTipo() == TokensID.TK_ID_FLOAT || token.getTipo() == TokensID.TK_ID_INT) {
+            eG = gS.procurar(new Elemento<String>("valor", token, nivel));
+            if(eG != null) {
+                token = eG.getTipo();
+            }
+            else {
+                throw new SemanticException(SemanticException.ERRO_UNDEFINED_VARIABLE, s.getLinha(), s.getColuna());
+            }
+        } else {
+            eG = new Elemento<String>(token.getTexto(), token, nivel);
+            eG.setRegistrador(token.getTexto());
+        }
         if(ID(token.getTipo())) {
             if(isFloat(token.getTipo()) && !flagFloat){
-                //Erro atribuição de float a um inteiro;
+                throw new SemanticException(SemanticException.ERRO_ATTRIBUTION_INCORRECT, s.getLinha(), s.getColuna());
             } else if(flagFloat){
                 trocaInt(token);
             }
+            cluster.setOperando2(eG);
+            gc.escreveFunção(cluster);
+            cluster.setOperando1(cluster.getDestino());
             A(flagFloat);
         }else if(token.getTipo() == TokensID.TK_SEPARADOR_ABRE_PAR) {
             parenteses.push(token);
+            clusters.push(cluster);
             B(flagFloat);
         } else {
             throw new SyntacticException(SyntacticException.ERRO_EXPRESSION_FORMATION, s.getLinha(), s.getColuna());
         }
     }
 
-    private void Fl(boolean flagFloat) {
+    private void Fl(boolean flagFloat) throws IOException{
         if(OP(token.getTipo())) {
             token = s.getToken();
+            if(token.getTipo() == TokensID.TK_IDENTIFICADOR || token.getTipo() == TokensID.TK_ID_FLOAT || token.getTipo() == TokensID.TK_ID_INT) {
+                eG = gS.procurar(new Elemento<String>("valor", token, nivel));
+                if(eG != null) {
+                    token = eG.getTipo();
+                }
+                else {
+                    throw new SemanticException(SemanticException.ERRO_UNDEFINED_VARIABLE, s.getLinha(), s.getColuna());
+                }
+            } else {
+                eG = new Elemento<String>(token.getTexto(), token, nivel);
+                eG.setRegistrador(token.getTexto());
+            }
             if(ID(token.getTipo())) {
                 if(isFloat(token.getTipo()) && !flagFloat){
-                    //Erro atribuição de float a um inteiro;
+                    throw new SemanticException(SemanticException.ERRO_ATTRIBUTION_INCORRECT, s.getLinha(), s.getColuna());
                 } else if(flagFloat){
                     trocaInt(token);
                 }
+                cluster.setOperando2(eG);
+                gc.escreveFunção(cluster);
+                cluster.setOperando1(cluster.getDestino());
                 Al(flagFloat);
             }else if(token.getTipo() == TokensID.TK_SEPARADOR_ABRE_PAR) {
                 parenteses.push(token);
@@ -425,9 +527,22 @@ public class Parser extends Terminal{
         }
     }
 
-    private void Al(boolean flagFloat) {
+    private void Al(boolean flagFloat) throws IOException {
         token = s.getToken();
+        if(token.getTipo() == TokensID.TK_IDENTIFICADOR || token.getTipo() == TokensID.TK_ID_FLOAT || token.getTipo() == TokensID.TK_ID_INT) {
+            eG = gS.procurar(new Elemento<String>("valor", token, nivel));
+            if(eG != null) {
+                token = eG.getTipo();
+            }
+            else {
+                throw new SemanticException(SemanticException.ERRO_UNDEFINED_VARIABLE, s.getLinha(), s.getColuna());
+            }
+        } else {
+            eG = new Elemento<String>(token.getTexto(), token, nivel);
+            eG.setRegistrador(token.getTexto());
+        }
         if(OP(token.getTipo())) {
+            cluster.setOperacao(token.getTexto());
             Fl(flagFloat);
         } else if (token.getTipo() == TokensID.TK_SEPARADOR_FECHA_PAR){
             do {
@@ -438,7 +553,15 @@ public class Parser extends Terminal{
                 }
                 token = s.getToken();
             }while(token.getTipo() == TokensID.TK_SEPARADOR_FECHA_PAR);
+            if(!clusters.empty()){
+                Elemento<String> des = cluster.getDestino();
+                cluster = clusters.pop();
+                cluster.setOperando2(des);
+                gc.escreveFunção(cluster);
+                cluster.setOperando1(cluster.getDestino());
+            }
             if(OP(token.getTipo())) {
+                cluster.setOperacao(token.getTexto());
                 F(flagFloat);
             } else {
                 return;
@@ -448,20 +571,40 @@ public class Parser extends Terminal{
         }
     }
 
-    private void B(boolean flagFloat) {
+    private void B(boolean flagFloat) throws IOException {
+        eG = new Elemento<String>("zero", token, nivel);
+        if(eG.getRegistrador() == null) {
+            eG.setRegistrador("T" + cont);
+            cont++;
+        }
+        cluster.setDestino(eG);
         token = s.getToken();
+        if(token.getTipo() == TokensID.TK_IDENTIFICADOR || token.getTipo() == TokensID.TK_ID_FLOAT || token.getTipo() == TokensID.TK_ID_INT) {
+            eG = gS.procurar(new Elemento<String>("valor", token, nivel));
+            if(eG != null) {
+                token = eG.getTipo();
+            }
+            else {
+                throw new SemanticException(SemanticException.ERRO_UNDEFINED_VARIABLE, s.getLinha(), s.getColuna());
+            }
+        } else {
+            eG = new Elemento<String>(token.getTexto(), token, nivel);
+            eG.setRegistrador(token.getTexto());
+        }
         if(ID(token.getTipo())) {
             if(isFloat(token.getTipo()) && !flagFloat){
-                //Erro atribuição de float a um inteiro;
+                throw new SemanticException(SemanticException.ERRO_ATTRIBUTION_INCORRECT, s.getLinha(), s.getColuna());
             } else if(flagFloat){
                 trocaInt(token);
             }
+            cluster.setOperando1(eG);
             Al(flagFloat);
         }else if(token.getTipo() == TokensID.TK_SEPARADOR_ABRE_PAR) {
+            clusters.push(cluster);
             parenteses.push(token);
             B(flagFloat);
         } else {
-             throw new SyntacticException(SyntacticException.ERRO_EXPRESSION_FORMATION, s.getLinha(), s.getColuna());
+            throw new SyntacticException(SyntacticException.ERRO_EXPRESSION_FORMATION, s.getLinha(), s.getColuna());
         }
     }
 }

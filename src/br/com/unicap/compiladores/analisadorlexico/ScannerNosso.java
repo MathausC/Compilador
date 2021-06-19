@@ -14,10 +14,12 @@ public class ScannerNosso extends Scan{
     private int coluna;
     private ArrayList<Token> tokens;
     private Hash hash;
+    public String file;
 
     public ScannerNosso(String file){
         try {
             String s;
+            this.file = file;
             s = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
             c = s.toCharArray();
             tokens = new ArrayList<Token>();

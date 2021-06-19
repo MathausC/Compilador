@@ -5,6 +5,11 @@ public class Lista {
     private No inicio;
     private No fim;
     private int cont;
+    private static int reg;
+
+    public boolean isEmpty(){
+        return inicio == null;
+    }
 
     public boolean contains(Elemento<String> e){
         No i = inicio;
@@ -19,6 +24,8 @@ public class Lista {
     }
 
     public void add(Elemento<String> e) {
+        e.setRegistrador("R" + reg);
+        reg++;
         No no = new No(e);
         if(cont == 0){
             inicio = no;
@@ -73,6 +80,10 @@ public class Lista {
             no.setAnterior(aux.getAnterior());
             no.setPosterior(aux.getPosterior());
         }
+    }
+
+    public static int getReg() {
+        return reg;
     }
 
     public class No{

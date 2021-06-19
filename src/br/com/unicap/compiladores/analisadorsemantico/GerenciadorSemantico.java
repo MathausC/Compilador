@@ -29,26 +29,31 @@ public class GerenciadorSemantico {
         }
     }
     public void addLista(Elemento<String> e){
-        if(!lista.contains(e)) {
+        if(lista.isEmpty()){
             lista.add(e);
         } else {
-            throw new SemanticException(SemanticException.ERRO_DEFINED_VARIABLE, p.getLinha(), p.getColuna());
+            if(!lista.contains(e)) {
+                lista.add(e);
+            } else {
+                throw new SemanticException(SemanticException.ERRO_DEFINED_VARIABLE, p.getLinha(), p.getColuna());
+            }
         }
     }
     
 //elemento ta dentro da lista
     public Elemento<String> procurar(Elemento<String> e) {
-       int i = lista.size() - 1;
-       while(i >= 0){
+        int i = lista.size() - 1;
+        while(i >= 0){
             if(lista.get(i).equals(e)){
                 if(lista.get(i).getMod()){
                     return lista.get(i);
                 }
             }
             i--;           
-       }
+        }
         return null;
     }
+    
 
     public void alteraElemento(Elemento<String> e){
         if(lista.contains(e)) {

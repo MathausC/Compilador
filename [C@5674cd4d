@@ -1,0 +1,11 @@
+START main:
+MOV R1, zero
+MOV R2, zero
+ADD R2, R1, R1
+CMP zero, zero
+JNE .L0
+MOV R2, zero
+ADD R2, 4, 3
+MULT T0, 4, 5
+MULT T0, T0, T0
+L0:

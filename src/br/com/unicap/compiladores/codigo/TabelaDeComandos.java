@@ -26,13 +26,19 @@ class TabelaDeComandos {
         tabelaHash.put("-", "SUV");
         tabelaHash.put("*", "MULT");
         tabelaHash.put("/", "DIV");
+
         tabelaHash.put("=", "MOV");
+        tabelaHash.put(";", "MOV");
+
         tabelaHash.put("<", "JL");
         tabelaHash.put("<=", "JLE");
         tabelaHash.put(">", "JG");
         tabelaHash.put(">=", "JGE");
         tabelaHash.put("!=", "JNE");
         tabelaHash.put("==", "JE");
+
+        tabelaHash.put("true", "JE");
+        tabelaHash.put("false", "JNE");
     }
 
     protected String get(String nome) {

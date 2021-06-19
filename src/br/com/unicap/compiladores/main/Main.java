@@ -1,6 +1,7 @@
 package br.com.unicap.compiladores.main;
 
 
+import java.io.IOException;
 import br.com.unicap.compiladores.analisadorlexico.ScannerNosso;
 import br.com.unicap.compiladores.excecoes.LexicalException;
 import br.com.unicap.compiladores.excecoes.SyntacticException;
@@ -15,6 +16,8 @@ public class Main {
         }catch (LexicalException a){
             System.out.println(a.getMessage());
         }catch (SyntacticException a) {
+            System.out.println(a.getMessage());
+        }catch (IOException a){
             System.out.println(a.getMessage());
         }
     }

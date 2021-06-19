@@ -1,26 +1,7 @@
 int main {
-    if(1 == 1){
-
+    int j = 0;
+    int i = j + j;
+    if(false){
+        i = 4 + 3 + (4*5);
     }
-}
-START main:
-mov r0, 1
-mov r1, 2
-BNQ r0, r1, L1
-
-J L3
-L1:
-
-BNE r0, L2
-
-J L3
-L2:
-
-
-L3:
-END
-
-add(a, b, c){
-    return "ADD" + a + ", " + b + ", " + c + "\n";
-     
 }
